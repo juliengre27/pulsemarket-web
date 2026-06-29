@@ -208,6 +208,62 @@ body{
   100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}
 }
 
+/* HEADER CALENDAR WIDGET */
+.header-right{display:flex;align-items:center;gap:14px;position:relative}
+.header-calendar{
+  display:flex;align-items:center;gap:9px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;
+  padding:7px 12px;
+  cursor:pointer;
+  transition:background .15s;
+}
+.header-calendar:hover{background:rgba(255,255,255,0.07)}
+.header-calendar-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+}
+.header-calendar-dot.impact-high-dot{background:var(--red-l)}
+.header-calendar-dot.impact-medium-dot{background:var(--gold-l)}
+.header-calendar-text{display:flex;flex-direction:column;gap:1px}
+.header-calendar-title{font-size:11.5px;font-weight:500;color:var(--text);
+  max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-calendar-time{font-size:10px;color:var(--text3)}
+.header-calendar-chevron{color:var(--text3);transition:transform .2s}
+.header-calendar-chevron.open{transform:rotate(180deg)}
+
+.header-calendar-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;
+  width:320px;
+  background:#141414;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px;
+  padding:14px;
+  z-index:50;
+  display:none;
+  box-shadow:0 12px 32px rgba(0,0,0,0.5);
+}
+.header-calendar-dropdown.open{display:block}
+.header-calendar-dropdown-label{
+  font-size:10.5px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;
+}
+.header-cal-item{
+  display:flex;align-items:flex-start;gap:9px;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.header-cal-item:last-child{border-bottom:none;padding-bottom:0}
+.header-cal-item-time{font-size:11px;color:var(--gold-l);font-weight:600;min-width:36px;flex-shrink:0}
+.header-cal-item-body{flex:1;min-width:0}
+.header-cal-item-title{font-size:12px;color:var(--text);font-weight:500;line-height:1.35}
+.header-cal-item-country{font-size:10px;color:var(--text3);margin-top:1px}
+.header-cal-empty{font-size:12px;color:var(--text3);padding:6px 0}
+
+@media (max-width:600px){
+  .header-calendar-title{max-width:90px}
+  .header-calendar-dropdown{width:260px;right:-20px}
+}
+
 /* FILTER PILLS */
 .filters{
   display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;
@@ -683,9 +739,23 @@ body{
               <div class="brand-name">PulseMarket</div>
             </div>
           </div>
-          <div class="live-status">
-            <span class="live-dot"></span>
-            <span id="live-clock" class="mono">Live</span>
+          <div class="header-right">
+            <div class="header-calendar" id="header-calendar-toggle">
+              <span class="header-calendar-dot impact-medium-dot" id="header-cal-dot"></span>
+              <div class="header-calendar-text">
+                <span class="header-calendar-title" id="header-cal-title">Lade Kalender...</span>
+                <span class="header-calendar-time" id="header-cal-time"></span>
+              </div>
+              <svg class="header-calendar-chevron" id="header-cal-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              <div class="header-calendar-dropdown" id="header-cal-dropdown">
+                <div class="header-calendar-dropdown-label">Wirtschaftskalender · Heute</div>
+                <div id="header-cal-list"></div>
+              </div>
+            </div>
+            <div class="live-status">
+              <span class="live-dot"></span>
+              <span id="live-clock" class="mono">Live</span>
+            </div>
           </div>
         </div>
 
@@ -791,12 +861,7 @@ body{
       <div class="ai-answer-box" id="ai-answer-box"></div>
     </div>
 
-    <div class="calendar-box">
-      <div class="calendar-box-label">Wirtschaftskalender · Live</div>
-      <div id="live-events-container">
-        <div class="live-events-loading" id="live-events-loading">Lade aktuelle Events...</div>
-      </div>
-    </div>
+    <div id="live-events-container" style="display:none"></div>
   </div>
 
   </div>
@@ -962,7 +1027,67 @@ function renderLiveEvents(events){
     const assets = card.dataset.asset || '';
     card.style.display = (activeFilter === 'all' || assets.includes(activeFilter)) ? 'flex' : 'none';
   });
+
+  updateHeaderCalendar(events);
 }
+
+// ============ HEADER CALENDAR WIDGET ============
+function updateHeaderCalendar(events){
+  const titleEl = document.getElementById('header-cal-title');
+  const timeEl = document.getElementById('header-cal-time');
+  const dotEl = document.getElementById('header-cal-dot');
+  const listEl = document.getElementById('header-cal-list');
+
+  if(!titleEl) return;
+
+  if(!events || events.length === 0){
+    titleEl.textContent = 'Keine Events heute';
+    timeEl.textContent = '';
+    if(listEl) listEl.innerHTML = '<div class="header-cal-empty">Ruhiger Tag im Kalender.</div>';
+    return;
+  }
+
+  const highImpact = events.filter(ev => ev.impact === 'High');
+  const relevant = highImpact.length > 0 ? highImpact : events.filter(ev => ev.impact === 'Medium');
+  const display = relevant.length > 0 ? relevant : events;
+
+  const headline = display[0];
+  titleEl.textContent = headline.title;
+  timeEl.textContent = `${headline.time} Uhr · ${headline.country}`;
+  dotEl.className = 'header-calendar-dot ' + (headline.impact === 'High' ? 'impact-high-dot' : 'impact-medium-dot');
+
+  if(listEl){
+    listEl.innerHTML = display.slice(0, 8).map(ev => `
+      <div class="header-cal-item">
+        <span class="header-cal-item-time mono">${ev.time}</span>
+        <div class="header-cal-item-body">
+          <div class="header-cal-item-title">${ev.title}</div>
+          <div class="header-cal-item-country">${ev.country}${ev.actual ? ` · Actual ${ev.actual}` : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+(function(){
+  const toggle = document.getElementById('header-calendar-toggle');
+  const dropdown = document.getElementById('header-cal-dropdown');
+  const chevron = document.getElementById('header-cal-chevron');
+  if(!toggle || !dropdown) return;
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('open');
+    chevron.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if(!toggle.contains(e.target)){
+      dropdown.classList.remove('open');
+      chevron.classList.remove('open');
+    }
+  });
+})();
 
 fetchLiveCalendar();
 setInterval(fetchLiveCalendar, 60 * 1000);
