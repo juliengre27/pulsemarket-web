@@ -70,7 +70,13 @@ body{
   top:-220px;right:-120px;
   pointer-events:none;
   z-index:0;
-  will-change:transform;
+  will-change:transform, opacity;
+  animation:glowFloat 9s ease-in-out infinite;
+}
+
+@keyframes glowFloat{
+  0%, 100%{transform:translate3d(0px, 0px, 0px) scale(1); opacity:1}
+  50%{transform:translate3d(-40px, 30px, 0px) scale(1.18); opacity:0.7}
 }
 
 .hero-chart-bg{
@@ -95,6 +101,12 @@ body{
   overflow:hidden;
   white-space:nowrap;
   will-change:transform;
+  animation:watermarkDrift 14s ease-in-out infinite;
+}
+
+@keyframes watermarkDrift{
+  0%, 100%{transform:translate3d(0px, 0px, 0px)}
+  50%{transform:translate3d(-32px, 0px, 0px)}
 }
 
 .hero-content{position:relative;z-index:2;will-change:transform}
@@ -953,7 +965,7 @@ function renderLiveEvents(events){
 }
 
 fetchLiveCalendar();
-setInterval(fetchLiveCalendar, 5 * 60 * 1000);
+setInterval(fetchLiveCalendar, 60 * 1000);
 
 // ============ GEOPOLITICS FEED ============
 async function fetchGeopolitics(){
@@ -1016,7 +1028,7 @@ function renderGeoFeed(items){
 }
 
 fetchGeopolitics();
-setInterval(fetchGeopolitics, 3 * 60 * 1000);
+setInterval(fetchGeopolitics, 60 * 1000);
 
 // Live clock
 function updateClock(){
@@ -1424,11 +1436,11 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
   }, 1400);
 })();
 
-// ============ SCROLL PARALLAX + IDLE MOTION — HERO DEPTH ============
+// ============ SCROLL PARALLAX — HERO DEPTH ============
+// Idle floating motion is handled by CSS keyframes (glowFloat, watermarkDrift)
+// for guaranteed reliability. This script only adds scroll-based movement on top.
 (function(){
   const heroOuter = document.getElementById('hero-outer');
-  const glow = document.getElementById('hero-glow');
-  const watermark = document.getElementById('hero-watermark');
 
   let ticking = false;
   let scrollY = 0;
@@ -1453,22 +1465,6 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
   }, { passive: true });
 
   if(heroOuter) heroOuter.style.transformOrigin = 'top center';
-
-  // Idle floating motion — independent of scroll, runs continuously
-  // so the header feels alive even before the user scrolls.
-  let idleT = 0;
-  function idleLoop(){
-    idleT += 0.006;
-    const gx = Math.sin(idleT) * 18;
-    const gy = Math.cos(idleT * 0.8) * 14;
-    if(glow) glow.style.transform = `translate3d(${gx}px, ${gy}px, 0px)`;
-
-    const wx = Math.sin(idleT * 0.6) * 10;
-    if(watermark) watermark.style.transform = `translate3d(${wx}px, 0px, 0px)`;
-
-    requestAnimationFrame(idleLoop);
-  }
-  idleLoop();
 })();
 </script>
 
