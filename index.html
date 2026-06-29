@@ -8,23 +8,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root{
-  --bg: #06060e;
-  --bg-card: #0f0f1c;
-  --bg-elevated: #16162c;
-  --purple: #7c3aed;
-  --purple-l: #a78bfa;
-  --gold: #c9a84c;
-  --gold-l: #e8c96a;
-  --text: #f0ede8;
-  --text2: #8b85b0;
-  --text3: #3d3860;
-  --border: rgba(124,58,237,0.15);
-  --green: #059669;
-  --green-l: #34d399;
-  --red: #dc2626;
-  --red-l: #f87171;
-  --amber: #b45309;
-  --amber-l: #e8c96a;
+  --bg: #0a0a0a;
+  --bg-card: #131313;
+  --bg-elevated: #1a1a1a;
+  --purple: #c9a23a;
+  --purple-l: #e8b94d;
+  --gold: #c9a23a;
+  --gold-l: #e8b94d;
+  --text: #f5f4f0;
+  --text2: #8a8a85;
+  --text3: #555550;
+  --border: rgba(255,255,255,0.08);
+  --green: #2d9d6f;
+  --green-l: #4ade80;
+  --red: #c0392b;
+  --red-l: #ef5350;
+  --amber: #c9a23a;
+  --amber-l: #e8b94d;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -51,13 +51,26 @@ body{
   padding:0;
   margin-bottom:24px;
   overflow:hidden;
-  background:radial-gradient(ellipse 120% 100% at 50% -20%, #1a1430 0%, #08080f 55%);
+  background:radial-gradient(ellipse 120% 100% at 50% -20%, #1c1810 0%, #0a0a0a 55%);
   border:1px solid rgba(255,255,255,0.06);
+  will-change:transform, opacity;
 }
 
 .hero-top{
   position:relative;
   padding:32px 36px 28px;
+  overflow:hidden;
+}
+
+.hero-glow{
+  position:absolute;
+  width:480px;height:480px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(201,162,58,0.16) 0%, transparent 70%);
+  top:-220px;right:-120px;
+  pointer-events:none;
+  z-index:0;
+  will-change:transform;
 }
 
 .hero-chart-bg{
@@ -66,9 +79,25 @@ body{
   opacity:0.28;
   pointer-events:none;
   mask-image:linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 90%);
+  will-change:transform;
 }
 
-.hero-content{position:relative;z-index:2}
+.hero-watermark{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  display:flex;align-items:center;
+  font-size:64px;font-weight:600;letter-spacing:-0.03em;
+  color:rgba(255,255,255,0.025);
+  line-height:1.05;
+  padding:0 36px;
+  pointer-events:none;
+  z-index:1;
+  overflow:hidden;
+  white-space:nowrap;
+  will-change:transform;
+}
+
+.hero-content{position:relative;z-index:2;will-change:transform}
 
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:6px;
@@ -109,9 +138,9 @@ body{
   width:30px;height:30px;border-radius:9px;
   margin-bottom:14px;
 }
-.stat-card-icon.ic-gold{background:rgba(201,168,76,0.14)}
-.stat-card-icon.ic-nas{background:rgba(124,58,237,0.14)}
-.stat-card-icon.ic-btc{background:rgba(232,163,28,0.14)}
+.stat-card-icon.ic-gold,
+.stat-card-icon.ic-nas,
+.stat-card-icon.ic-btc{background:rgba(201,162,58,0.12)}
 
 .stat-card-label{
   font-size:12px;font-weight:500;color:var(--text2);
@@ -137,17 +166,18 @@ body{
 .sentiment-asset{display:none}
 .sentiment-dir{display:none}
 
-.brand{display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:11px}
 
 .brand-icon{
-  width:34px;height:34px;
-  border-radius:9px;
-  background:linear-gradient(135deg, var(--purple), var(--gold));
+  width:36px;height:36px;
+  border-radius:10px;
+  background:linear-gradient(135deg, #1c1810, #0a0a0a);
+  border:1px solid rgba(232,163,28,0.25);
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;
+  flex-shrink:0;
 }
 
-.brand-name{font-size:17px;font-weight:600;letter-spacing:-0.01em}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:-0.015em}
 .brand-tag{font-size:11px;color:var(--text2);margin-top:1px}
 
 .live-status{
@@ -184,9 +214,9 @@ body{
 }
 .pill:hover{background:var(--bg-elevated)}
 .pill.active{
-  background:var(--purple);
-  color:#fff;
-  border-color:var(--purple);
+  background:var(--gold);
+  color:#0a0a0a;
+  border-color:var(--gold);
 }
 
 /* WARN BANNER */
@@ -229,7 +259,7 @@ body{
   margin-bottom:12px;
   transition:border-color .15s;
 }
-.news-card:hover{border-color:rgba(124,58,237,0.3)}
+.news-card:hover{border-color:rgba(201,162,58,0.25)}
 
 .news-top{
   display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
@@ -267,7 +297,7 @@ body{
 .val-neutral{color:var(--text)}
 
 .explain-box{
-  background:rgba(124,58,237,0.06);
+  background:rgba(201,162,58,0.06);
   border-radius:9px;
   padding:13px 15px;
   font-size:12.5px;
@@ -341,7 +371,7 @@ body{
   transition:all .15s;
   display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.main-tab.active{background:var(--purple);color:#fff}
+.main-tab.active{background:var(--gold);color:#0a0a0a}
 .journal-count-badge{
   background:rgba(255,255,255,0.2);
   border-radius:10px;padding:1px 7px;font-size:10.5px;
@@ -367,7 +397,7 @@ body{
 .journal-intro{
   font-size:12.5px;color:var(--text2);line-height:1.6;
   margin-bottom:18px;padding:13px 15px;
-  background:rgba(124,58,237,0.06);border-radius:9px;
+  background:rgba(201,162,58,0.06);border-radius:9px;
 }
 
 .journal-stats{
@@ -410,7 +440,7 @@ body{
   cursor:pointer;font-family:'Inter',sans-serif;
   transition:all .15s;
 }
-.toggle-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.toggle-btn.active{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
 .toggle-btn.result-win.active{background:var(--green);border-color:var(--green)}
 .toggle-btn.result-loss.active{background:var(--red);border-color:var(--red)}
 .toggle-btn.result-be.active{background:var(--amber);border-color:var(--amber)}
@@ -437,7 +467,7 @@ body{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
 .journal-item-badges{display:flex;gap:6px;flex-shrink:0}
 .j-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px}
-.j-checked-yes{background:rgba(124,58,237,0.15);color:var(--purple-l)}
+.j-checked-yes{background:rgba(201,162,58,0.15);color:var(--purple-l)}
 .j-checked-no{background:rgba(139,133,176,0.12);color:var(--text2)}
 .j-result-win{background:rgba(5,150,105,0.15);color:var(--green-l)}
 .j-result-loss{background:rgba(220,38,38,0.15);color:var(--red-l)}
@@ -507,13 +537,13 @@ body{
   content:'';width:6px;height:6px;border-radius:50%;
   background:var(--purple-l);flex-shrink:0;
 }
-.ai-quick-q:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
-.ai-quick-q:hover::before{background:#fff}
-.ai-quick-q.active{background:var(--purple);color:#fff;border-color:var(--purple)}
-.ai-quick-q.active::before{background:#fff}
+.ai-quick-q:hover{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
+.ai-quick-q:hover::before{background:#0a0a0a}
+.ai-quick-q.active{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
+.ai-quick-q.active::before{background:#0a0a0a}
 .ai-answer-box{
   margin-top:14px;padding:14px 16px;border-radius:10px;
-  background:rgba(124,58,237,0.06);border:1px solid var(--border);
+  background:rgba(201,162,58,0.06);border:1px solid var(--border);
   font-size:13px;line-height:1.65;color:var(--text2);
   display:none;
 }
@@ -533,61 +563,84 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .ai-error{color:var(--red-l)}
 
-/* GEOPOLITICS BOX */
-.geo-box{
+/* GEOPOLITICS — MAIN COLUMN, PREMIUM CARDS */
+.geo-loading{
+  text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
+}
+.geo-item{
+  display:flex;flex-direction:column;gap:10px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:16px;padding:20px 22px;margin-bottom:12px;
+  text-decoration:none;color:inherit;
+  transition:border-color .15s, transform .15s;
+  position:relative;
+  overflow:hidden;
+}
+.geo-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg, var(--red-l), var(--gold));
+  opacity:0.7;
+}
+.geo-item:hover{border-color:rgba(232,163,28,0.35);transform:translateX(2px)}
+.geo-item-top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.geo-item-badge{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;
+  padding:3px 9px;border-radius:6px;
+  background:rgba(220,38,38,0.12);color:var(--red-l);
+  display:inline-flex;align-items:center;gap:4px;
+}
+.geo-item-meta{font-size:11.5px;color:var(--text3)}
+.geo-item-title{font-size:16px;font-weight:500;color:var(--text);line-height:1.4}
+.geo-item-link-row{
+  display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gold-l);
+  margin-top:2px;
+}
+.geo-empty{
+  text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+}
+
+/* CALENDAR BOX — SIDEBAR, COMPACT */
+.calendar-box{
   background:var(--bg-card);border:1px solid var(--border);
   border-radius:14px;padding:16px 18px;margin-top:16px;
 }
-.geo-box-label{
-  font-size:11px;font-weight:600;color:var(--gold-l);
+.calendar-box-label{
+  font-size:11px;font-weight:600;color:var(--purple-l);
   text-transform:uppercase;letter-spacing:0.05em;
-  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+  margin-bottom:12px;
 }
-.geo-loading{font-size:12.5px;color:var(--text3);padding:8px 0}
-.geo-item{
-  display:block;padding:10px 0;border-bottom:1px solid var(--border);
-  text-decoration:none;color:inherit;transition:opacity .15s;
-}
-.geo-item:hover{opacity:0.75}
-.geo-item:last-child{border-bottom:none;padding-bottom:0}
-.geo-item-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:4px}
-.geo-item-meta{font-size:11px;color:var(--text3)}
-.geo-empty{font-size:12.5px;color:var(--text3);padding:8px 0}
 
 @media (max-width:480px){
   .ai-ask-input-row{flex-direction:column}
   .ai-ask-btn{justify-content:center}
 }
 
-/* LIVE EVENTS */
+/* LIVE EVENTS — COMPACT, SIDEBAR */
 .live-events-loading{
-  text-align:center;padding:20px;color:var(--text3);font-size:13px;
+  text-align:center;padding:16px;color:var(--text3);font-size:12.5px;
 }
 .live-event-card{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:11px;padding:11px 14px;margin-bottom:8px;
+  display:flex;flex-direction:column;gap:4px;
+  background:var(--bg-elevated);border:1px solid var(--border);
+  border-radius:9px;padding:9px 11px;margin-bottom:7px;
 }
-.live-event-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
-.live-event-time{font-size:12px;color:var(--text2);min-width:40px;font-weight:500;flex-shrink:0}
+.live-event-left{display:flex;align-items:baseline;gap:8px;min-width:0}
+.live-event-time{font-size:11px;color:var(--purple-l);min-width:38px;font-weight:600;flex-shrink:0}
 .live-event-info{min-width:0;flex:1}
-.live-event-title{font-size:13px;font-weight:500;color:var(--text);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.live-event-country{font-size:11px;color:var(--text3)}
-.live-event-data{display:flex;gap:10px;flex-shrink:0;font-size:11.5px}
+.live-event-title{font-size:12px;font-weight:500;color:var(--text);line-height:1.35}
+.live-event-country{font-size:10px;color:var(--text3);margin-top:1px}
+.live-event-data{display:flex;gap:8px;font-size:10.5px;margin-top:4px}
 .live-event-data span{color:var(--text2)}
 .live-event-data b{color:var(--text);font-weight:500}
+.live-event-impact-row{display:flex;justify-content:flex-end;margin-top:-18px}
 .live-events-empty{
-  text-align:center;padding:20px;color:var(--text3);font-size:13px;
-  background:var(--bg-card);border:1px solid var(--border);border-radius:11px;
+  text-align:center;padding:16px;color:var(--text3);font-size:12px;
+  background:var(--bg-elevated);border:1px solid var(--border);border-radius:9px;
 }
 .live-events-fallback-note{
-  font-size:11.5px;color:var(--amber-l);margin-bottom:10px;
-  padding:8px 12px;background:rgba(201,168,76,0.08);border-radius:8px;
-}
-
-@media (max-width:480px){
-  .live-event-data{display:none}
+  font-size:10.5px;color:var(--amber-l);margin-bottom:8px;
+  padding:7px 10px;background:rgba(201,168,76,0.08);border-radius:7px;
 }
 
 @media (max-width:480px){
@@ -600,13 +653,20 @@ body{
 
 <div class="container">
 
-  <div class="hero">
-    <div class="hero-top">
+  <div class="hero" id="hero-outer">
+    <div class="hero-top" id="hero-top">
+      <div class="hero-glow" id="hero-glow"></div>
       <canvas id="hero-chart-canvas" class="hero-chart-bg"></canvas>
-      <div class="hero-content">
+      <div class="hero-watermark" id="hero-watermark">Know what moves the market — before it moves.</div>
+      <div class="hero-content" id="hero-content-inner">
         <div class="header">
           <div class="brand">
-            <div class="brand-icon">📡</div>
+            <div class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="#9c8a4a" stroke-width="1"/>
+                <path d="M4 12h3l2 6 4-12 2 6h5" stroke="#e8b94d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
             <div>
               <div class="brand-name">PulseMarket</div>
             </div>
@@ -621,7 +681,7 @@ body{
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           Markt-Cockpit · Live
         </div>
-        <div class="hero-title">Know what moves the market<br>— before it moves.</div>
+        <div class="hero-title">Der Markt bewegt sich.<br>Du weißt zuerst, warum.</div>
         <div class="hero-sub">Wirtschaftskalender, Geopolitik und KI-Erklärungen für Gold, NAS100 und Bitcoin — an einem Ort, in Klartext.</div>
       </div>
     </div>
@@ -629,7 +689,7 @@ body{
     <div class="stat-grid-hero">
       <div class="stat-card-hero">
         <div class="stat-card-icon ic-gold">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c96a" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
         </div>
         <div class="stat-card-label">Gold · XAUUSD</div>
         <div class="stat-card-value">Bearish</div>
@@ -637,12 +697,12 @@ body{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
           GDP + PCE belasten
         </div>
-        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,8 15,12 30,10 45,20 60,18 75,28 90,26" fill="none" stroke="#f87171" stroke-width="2"/></svg>
+        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,8 15,12 30,10 45,20 60,18 75,28 90,26" fill="none" stroke="#ef5350" stroke-width="2"/></svg>
       </div>
 
       <div class="stat-card-hero">
         <div class="stat-card-icon ic-nas">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg>
         </div>
         <div class="stat-card-label">NAS100</div>
         <div class="stat-card-value">Bullish</div>
@@ -650,12 +710,12 @@ body{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>
           Starkes GDP stützt
         </div>
-        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,28 15,24 30,26 45,16 60,18 75,8 90,10" fill="none" stroke="#34d399" stroke-width="2"/></svg>
+        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,28 15,24 30,26 45,16 60,18 75,8 90,10" fill="none" stroke="#4ade80" stroke-width="2"/></svg>
       </div>
 
       <div class="stat-card-hero">
         <div class="stat-card-icon ic-btc">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8a31c" stroke-width="2"><path d="M6 3v18M6 8h9a3 3 0 010 6H6m0 0h10a3 3 0 010 6H6"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M6 3v18M6 8h9a3 3 0 010 6H6m0 0h10a3 3 0 010 6H6"/></svg>
         </div>
         <div class="stat-card-label">Bitcoin · BTC</div>
         <div class="stat-card-value">Bearish</div>
@@ -663,7 +723,7 @@ body{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
           Risk-off Stimmung
         </div>
-        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,10 15,14 30,12 45,22 60,24 75,30 90,29" fill="none" stroke="#f87171" stroke-width="2"/></svg>
+        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,10 15,14 30,12 45,22 60,24 75,30 90,29" fill="none" stroke="#ef5350" stroke-width="2"/></svg>
       </div>
     </div>
   </div>
@@ -690,14 +750,17 @@ body{
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
   </div>
 
-  <div class="section-label">Heute · Wirtschaftskalender · Live</div>
+  <div class="section-label">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+    Geopolitik · Markt-relevant · Live
+  </div>
 
-  <div id="live-events-container">
-    <div class="live-events-loading" id="live-events-loading">Lade aktuelle Events...</div>
+  <div id="geo-feed-container">
+    <div class="geo-loading">Lade geopolitische News...</div>
   </div>
 
   <div class="footer-note">
-    Live-Kalender via Forex Factory · aktualisiert alle 5 Minuten
+    Live via FinancialJuice · aktualisiert alle 3 Minuten · nur markt-relevante Meldungen
   </div>
   </div>
 
@@ -716,13 +779,10 @@ body{
       <div class="ai-answer-box" id="ai-answer-box"></div>
     </div>
 
-    <div class="geo-box">
-      <div class="geo-box-label">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
-        Geopolitik · Markt-relevant
-      </div>
-      <div id="geo-feed-container">
-        <div class="geo-loading">Lade geopolitische News...</div>
+    <div class="calendar-box">
+      <div class="calendar-box-label">Wirtschaftskalender · Live</div>
+      <div id="live-events-container">
+        <div class="live-events-loading" id="live-events-loading">Lade aktuelle Events...</div>
       </div>
     </div>
   </div>
@@ -916,6 +976,18 @@ function formatGeoDate(pubDate){
   return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
 }
 
+function timeAgoLabel(pubDate){
+  if(!pubDate) return '';
+  const d = new Date(pubDate);
+  if(isNaN(d.getTime())) return '';
+  const diffMin = Math.round((Date.now() - d.getTime()) / 60000);
+  if(diffMin < 1) return 'gerade jetzt';
+  if(diffMin < 60) return `vor ${diffMin} Min`;
+  const diffH = Math.round(diffMin / 60);
+  if(diffH < 24) return `vor ${diffH} Std`;
+  return formatGeoDate(pubDate);
+}
+
 function renderGeoFeed(items){
   const container = document.getElementById('geo-feed-container');
   if(!container) return;
@@ -925,16 +997,26 @@ function renderGeoFeed(items){
     return;
   }
 
-  container.innerHTML = items.map(item => `
+  container.innerHTML = items.map((item, idx) => `
     <a class="geo-item" href="${item.link}" target="_blank" rel="noopener">
+      <div class="geo-item-top">
+        <span class="geo-item-badge">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          ${idx === 0 ? 'Breaking' : 'Markt-relevant'}
+        </span>
+        <span class="geo-item-meta">${timeAgoLabel(item.pubDate)}</span>
+      </div>
       <div class="geo-item-title">${item.title}</div>
-      <div class="geo-item-meta">${formatGeoDate(item.pubDate)} · Tagesschau</div>
+      <div class="geo-item-link-row">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+        Quelle ansehen
+      </div>
     </a>
   `).join('');
 }
 
 fetchGeopolitics();
-setInterval(fetchGeopolitics, 10 * 60 * 1000);
+setInterval(fetchGeopolitics, 3 * 60 * 1000);
 
 // Live clock
 function updateClock(){
@@ -1249,9 +1331,9 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
   window.addEventListener('resize', resize);
 
   const lines = [
-    { color: '201,168,76', points: [], value: 100, vol: 1.0, speed: 0.012, phase: 0 },
-    { color: '167,139,250', points: [], value: 100, vol: 1.6, speed: 0.017, phase: 2 },
-    { color: '232,163,28', points: [], value: 100, vol: 2.1, speed: 0.009, phase: 4 },
+    { color: '201,162,58', points: [], value: 100, vol: 1.0, speed: 0.012, phase: 0 },
+    { color: '90,90,86', points: [], value: 100, vol: 1.6, speed: 0.017, phase: 2 },
+    { color: '60,60,58', points: [], value: 100, vol: 2.1, speed: 0.009, phase: 4 },
   ];
 
   const POINT_COUNT = 140;
@@ -1340,6 +1422,53 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
     step();
     draw();
   }, 1400);
+})();
+
+// ============ SCROLL PARALLAX + IDLE MOTION — HERO DEPTH ============
+(function(){
+  const heroOuter = document.getElementById('hero-outer');
+  const glow = document.getElementById('hero-glow');
+  const watermark = document.getElementById('hero-watermark');
+
+  let ticking = false;
+  let scrollY = 0;
+
+  function updateScrollTransform(){
+    const progress = Math.min(1, scrollY / 500);
+
+    if(heroOuter){
+      heroOuter.style.transform = `translate3d(0px, ${scrollY * 0.18}px, 0px) scale(${1 - progress * 0.04})`;
+      heroOuter.style.opacity = String(Math.max(0.25, 1 - progress * 0.75));
+    }
+
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    scrollY = window.scrollY || window.pageYOffset || 0;
+    if(!ticking){
+      requestAnimationFrame(updateScrollTransform);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  if(heroOuter) heroOuter.style.transformOrigin = 'top center';
+
+  // Idle floating motion — independent of scroll, runs continuously
+  // so the header feels alive even before the user scrolls.
+  let idleT = 0;
+  function idleLoop(){
+    idleT += 0.006;
+    const gx = Math.sin(idleT) * 18;
+    const gy = Math.cos(idleT * 0.8) * 14;
+    if(glow) glow.style.transform = `translate3d(${gx}px, ${gy}px, 0px)`;
+
+    const wx = Math.sin(idleT * 0.6) * 10;
+    if(watermark) watermark.style.transform = `translate3d(${wx}px, 0px, 0px)`;
+
+    requestAnimationFrame(idleLoop);
+  }
+  idleLoop();
 })();
 </script>
 
