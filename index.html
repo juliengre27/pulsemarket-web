@@ -533,6 +533,27 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .ai-error{color:var(--red-l)}
 
+/* GEOPOLITICS BOX */
+.geo-box{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:16px 18px;margin-top:16px;
+}
+.geo-box-label{
+  font-size:11px;font-weight:600;color:var(--gold-l);
+  text-transform:uppercase;letter-spacing:0.05em;
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.geo-loading{font-size:12.5px;color:var(--text3);padding:8px 0}
+.geo-item{
+  display:block;padding:10px 0;border-bottom:1px solid var(--border);
+  text-decoration:none;color:inherit;transition:opacity .15s;
+}
+.geo-item:hover{opacity:0.75}
+.geo-item:last-child{border-bottom:none;padding-bottom:0}
+.geo-item-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:4px}
+.geo-item-meta{font-size:11px;color:var(--text3)}
+.geo-empty{font-size:12.5px;color:var(--text3);padding:8px 0}
+
 @media (max-width:480px){
   .ai-ask-input-row{flex-direction:column}
   .ai-ask-btn{justify-content:center}
@@ -559,6 +580,10 @@ body{
 .live-events-empty{
   text-align:center;padding:20px;color:var(--text3);font-size:13px;
   background:var(--bg-card);border:1px solid var(--border);border-radius:11px;
+}
+.live-events-fallback-note{
+  font-size:11.5px;color:var(--amber-l);margin-bottom:10px;
+  padding:8px 12px;background:rgba(201,168,76,0.08);border-radius:8px;
 }
 
 @media (max-width:480px){
@@ -690,6 +715,16 @@ body{
       </div>
       <div class="ai-answer-box" id="ai-answer-box"></div>
     </div>
+
+    <div class="geo-box">
+      <div class="geo-box-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+        Geopolitik · Markt-relevant
+      </div>
+      <div id="geo-feed-container">
+        <div class="geo-loading">Lade geopolitische News...</div>
+      </div>
+    </div>
   </div>
 
   </div>
@@ -809,12 +844,25 @@ function renderLiveEvents(events){
 
   latestLiveEvents = events;
 
+  const highImpact = events.filter(ev => ev.impact === 'High');
+  const displayEvents = highImpact.length > 0 ? highImpact : events.filter(ev => ev.impact === 'Medium');
+  const isFallback = highImpact.length === 0 && displayEvents.length > 0;
+
   if(events.length === 0){
     container.innerHTML = '<div class="live-events-empty">Keine weiteren Events für heute im Kalender.</div>';
     return;
   }
 
-  container.innerHTML = events.map(ev => {
+  if(displayEvents.length === 0){
+    container.innerHTML = '<div class="live-events-empty">Ruhiger Tag — keine markt-relevanten High-Impact Events heute.</div>';
+    return;
+  }
+
+  const fallbackNote = isFallback
+    ? '<div class="live-events-fallback-note">Kein High-Impact Event heute — die wichtigsten Medium-Impact Events stattdessen.</div>'
+    : '';
+
+  container.innerHTML = fallbackNote + displayEvents.map(ev => {
     const dataHtml = (ev.actual || ev.forecast || ev.previous)
       ? `<div class="live-event-data">
            ${ev.actual ? `<span>Actual <b>${ev.actual}</b></span>` : ''}
@@ -846,6 +894,47 @@ function renderLiveEvents(events){
 
 fetchLiveCalendar();
 setInterval(fetchLiveCalendar, 5 * 60 * 1000);
+
+// ============ GEOPOLITICS FEED ============
+async function fetchGeopolitics(){
+  const container = document.getElementById('geo-feed-container');
+  try {
+    const res = await fetch(`${BACKEND_URL}/geopolitics/today`);
+    if(!res.ok) throw new Error('Geopolitics request failed: ' + res.status);
+    const data = await res.json();
+    renderGeoFeed(data.items || []);
+  } catch(err) {
+    console.warn('Geopolitik-Feed Anfrage fehlgeschlagen:', err);
+    if(container) container.innerHTML = '<div class="geo-empty">Geopolitik-Feed nicht erreichbar.</div>';
+  }
+}
+
+function formatGeoDate(pubDate){
+  if(!pubDate) return '';
+  const d = new Date(pubDate);
+  if(isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+}
+
+function renderGeoFeed(items){
+  const container = document.getElementById('geo-feed-container');
+  if(!container) return;
+
+  if(items.length === 0){
+    container.innerHTML = '<div class="geo-empty">Keine markt-relevanten geopolitischen Meldungen gerade.</div>';
+    return;
+  }
+
+  container.innerHTML = items.map(item => `
+    <a class="geo-item" href="${item.link}" target="_blank" rel="noopener">
+      <div class="geo-item-title">${item.title}</div>
+      <div class="geo-item-meta">${formatGeoDate(item.pubDate)} · Tagesschau</div>
+    </a>
+  `).join('');
+}
+
+fetchGeopolitics();
+setInterval(fetchGeopolitics, 10 * 60 * 1000);
 
 // Live clock
 function updateClock(){
@@ -1153,42 +1242,42 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
     canvas.height = rect.height * devicePixelRatio;
     canvas.style.width = rect.width + 'px';
     canvas.style.height = rect.height + 'px';
+    ctx.setTransform(1,0,0,1,0,0);
     ctx.scale(devicePixelRatio, devicePixelRatio);
   }
   resize();
   window.addEventListener('resize', resize);
 
-  let candles = [];
-  let price = 100;
-  const candleWidth = 14;
-  const gap = 6;
+  const lines = [
+    { color: '201,168,76', points: [], value: 100, vol: 1.0, speed: 0.012, phase: 0 },
+    { color: '167,139,250', points: [], value: 100, vol: 1.6, speed: 0.017, phase: 2 },
+    { color: '232,163,28', points: [], value: 100, vol: 2.1, speed: 0.009, phase: 4 },
+  ];
 
-  function seedCandles(){
-    candles = [];
-    let p = 100;
-    const count = Math.ceil((canvas.width / devicePixelRatio) / (candleWidth + gap)) + 2;
-    for(let i = 0; i < count; i++){
-      const change = (Math.random() - 0.46) * 8;
-      const open = p;
-      const close = p + change;
-      const high = Math.max(open, close) + Math.random() * 3;
-      const low = Math.min(open, close) - Math.random() * 3;
-      candles.push({ open, close, high, low });
-      p = close;
+  const POINT_COUNT = 140;
+
+  function seedLine(line){
+    line.points = [];
+    let v = 100;
+    for(let i = 0; i < POINT_COUNT; i++){
+      v += (Math.random() - 0.5) * line.vol;
+      line.points.push(v);
     }
-    price = p;
+    line.value = v;
   }
-  seedCandles();
+  lines.forEach(seedLine);
 
-  function addCandle(){
-    const change = (Math.random() - 0.46) * 8;
-    const open = price;
-    const close = price + change;
-    const high = Math.max(open, close) + Math.random() * 3;
-    const low = Math.min(open, close) - Math.random() * 3;
-    candles.push({ open, close, high, low });
-    price = close;
-    if(candles.length > 60) candles.shift();
+  let t = 0;
+
+  function step(){
+    t += 1;
+    lines.forEach(line => {
+      const drift = Math.sin(t * line.speed + line.phase) * line.vol * 0.5;
+      const noise = (Math.random() - 0.5) * line.vol;
+      line.value += drift * 0.15 + noise * 0.3;
+      line.points.push(line.value);
+      if(line.points.length > POINT_COUNT) line.points.shift();
+    });
   }
 
   function draw(){
@@ -1196,42 +1285,61 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
     const h = canvas.height / devicePixelRatio;
     ctx.clearRect(0, 0, w, h);
 
-    const allVals = candles.flatMap(c => [c.high, c.low]);
+    const allVals = lines.flatMap(l => l.points);
     const min = Math.min(...allVals);
     const max = Math.max(...allVals);
-    const range = max - min || 1;
-    const padding = 20;
+    const range = (max - min) || 1;
+    const padTop = 12;
+    const padBottom = 12;
 
     function yFor(val){
-      return padding + (1 - (val - min) / range) * (h - padding * 2);
+      return padTop + (1 - (val - min) / range) * (h - padTop - padBottom);
     }
 
-    candles.forEach((c, i) => {
-      const x = w - (candles.length - i) * (candleWidth + gap);
-      if(x < -candleWidth) return;
-      const bullish = c.close >= c.open;
-      ctx.strokeStyle = bullish ? 'rgba(52,211,153,0.5)' : 'rgba(248,113,113,0.5)';
-      ctx.fillStyle = bullish ? 'rgba(52,211,153,0.22)' : 'rgba(248,113,113,0.22)';
-      ctx.lineWidth = 1;
+    lines.forEach(line => {
+      const n = line.points.length;
+      const stepX = w / (POINT_COUNT - 1);
+
+      const grad = ctx.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, `rgba(${line.color},0)`);
+      grad.addColorStop(0.55, `rgba(${line.color},0.55)`);
+      grad.addColorStop(1, `rgba(${line.color},0.9)`);
 
       ctx.beginPath();
-      ctx.moveTo(x + candleWidth / 2, yFor(c.high));
-      ctx.lineTo(x + candleWidth / 2, yFor(c.low));
+      line.points.forEach((val, i) => {
+        const x = i * stepX;
+        const y = yFor(val);
+        if(i === 0) ctx.moveTo(x, y);
+        else {
+          const prevX = (i - 1) * stepX;
+          const prevY = yFor(line.points[i - 1]);
+          const cpX = (prevX + x) / 2;
+          ctx.quadraticCurveTo(prevX, prevY, cpX, (prevY + y) / 2);
+        }
+      });
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.4;
       ctx.stroke();
 
-      const bodyTop = yFor(Math.max(c.open, c.close));
-      const bodyH = Math.max(Math.abs(yFor(c.open) - yFor(c.close)), 1.5);
-      ctx.fillRect(x, bodyTop, candleWidth, bodyH);
-      ctx.strokeRect(x, bodyTop, candleWidth, bodyH);
+      const lastX = (n - 1) * stepX;
+      const lastY = yFor(line.points[n - 1]);
+      ctx.beginPath();
+      ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${line.color},0.95)`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${line.color},0.18)`;
+      ctx.fill();
     });
   }
 
   draw();
 
   setInterval(() => {
-    addCandle();
+    step();
     draw();
-  }, 2200);
+  }, 1400);
 })();
 </script>
 
