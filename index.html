@@ -39,27 +39,33 @@ body{
 .mono{font-family:'JetBrains Mono',monospace}
 
 .container{
-  max-width:760px;
+  max-width:1180px;
   margin:0 auto;
-  padding:24px 20px 80px;
+  padding:32px 32px 100px;
 }
 
 /* HERO SECTION */
 .hero{
   position:relative;
-  border-radius:18px;
-  padding:36px 28px;
-  margin-bottom:28px;
+  border-radius:24px;
+  padding:0;
+  margin-bottom:24px;
   overflow:hidden;
-  background:linear-gradient(180deg, #0a0a16 0%, #08080f 100%);
-  border:1px solid var(--border);
+  background:radial-gradient(ellipse 120% 100% at 50% -20%, #1a1430 0%, #08080f 55%);
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.hero-top{
+  position:relative;
+  padding:32px 36px 28px;
 }
 
 .hero-chart-bg{
   position:absolute;
   top:0;left:0;right:0;bottom:0;
-  opacity:0.35;
+  opacity:0.28;
   pointer-events:none;
+  mask-image:linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 90%);
 }
 
 .hero-content{position:relative;z-index:2}
@@ -67,39 +73,69 @@ body{
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:6px;
   font-size:11px;font-weight:600;color:var(--gold-l);
-  text-transform:uppercase;letter-spacing:0.07em;
-  margin-bottom:12px;
+  text-transform:uppercase;letter-spacing:0.08em;
+  margin-bottom:14px;
 }
 
 .hero-title{
-  font-size:30px;font-weight:600;letter-spacing:-0.02em;
-  line-height:1.15;margin-bottom:8px;
-  background:linear-gradient(135deg, #ffffff 30%, var(--purple-l) 100%);
+  font-size:38px;font-weight:600;letter-spacing:-0.025em;
+  line-height:1.12;margin-bottom:10px;
+  background:linear-gradient(135deg, #ffffff 25%, var(--purple-l) 100%);
   -webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;
+  max-width:560px;
 }
 
-.hero-sub{font-size:13.5px;color:var(--text2);margin-bottom:22px;max-width:480px;line-height:1.5}
+.hero-sub{font-size:14.5px;color:var(--text2);margin-bottom:0;max-width:480px;line-height:1.55}
 
-.sentiment-row{
-  display:flex;gap:10px;flex-wrap:wrap;
+/* APPLE HEALTH STYLE STAT GRID */
+.stat-grid-hero{
+  position:relative;z-index:2;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  border-top:1px solid rgba(255,255,255,0.07);
 }
-.sentiment-chip{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:11px;
-  padding:9px 14px;
-  backdrop-filter:blur(6px);
+.stat-card-hero{
+  padding:22px 28px 26px;
+  border-right:1px solid rgba(255,255,255,0.07);
+  position:relative;
+  transition:background .15s;
 }
-.sentiment-asset{font-size:12.5px;font-weight:600;min-width:48px}
-.sentiment-dir{
+.stat-card-hero:last-child{border-right:none}
+.stat-card-hero:hover{background:rgba(255,255,255,0.02)}
+
+.stat-card-icon{
+  display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:9px;
+  margin-bottom:14px;
+}
+.stat-card-icon.ic-gold{background:rgba(201,168,76,0.14)}
+.stat-card-icon.ic-nas{background:rgba(124,58,237,0.14)}
+.stat-card-icon.ic-btc{background:rgba(232,163,28,0.14)}
+
+.stat-card-label{
+  font-size:12px;font-weight:500;color:var(--text2);
+  margin-bottom:6px;
+}
+.stat-card-value{
+  font-size:30px;font-weight:600;letter-spacing:-0.02em;
+  line-height:1;margin-bottom:8px;
+  display:flex;align-items:baseline;gap:8px;
+}
+.stat-card-trend{
+  font-size:13px;font-weight:500;
   display:flex;align-items:center;gap:4px;
-  font-size:12px;font-weight:500;
 }
-.sentiment-dir.s-bull{color:var(--green-l)}
-.sentiment-dir.s-bear{color:var(--red-l)}
-.sentiment-dir.s-neutral{color:var(--text2)}
+.stat-card-trend.t-bull{color:var(--green-l)}
+.stat-card-trend.t-bear{color:var(--red-l)}
+.stat-card-sparkline{
+  position:absolute;bottom:0;right:0;width:90px;height:36px;opacity:0.5;
+}
+
+.sentiment-row{display:none}
+.sentiment-chip{display:none}
+.sentiment-asset{display:none}
+.sentiment-dir{display:none}
 
 .brand{display:flex;align-items:center;gap:10px}
 
@@ -291,10 +327,11 @@ body{
 
 /* MAIN TABS */
 .main-tabs{
-  display:flex;gap:4px;margin-bottom:20px;
+  display:flex;gap:4px;margin-bottom:24px;
   background:var(--bg-card);
   border:1px solid var(--border);
-  border-radius:10px;padding:4px;
+  border-radius:12px;padding:4px;
+  max-width:420px;
 }
 .main-tab{
   flex:1;padding:9px;border-radius:7px;
@@ -310,6 +347,21 @@ body{
   border-radius:10px;padding:1px 7px;font-size:10.5px;
 }
 .view-hidden{display:none}
+
+/* DASHBOARD GRID — two columns for wider layout */
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:24px;
+  align-items:start;
+}
+.main-column{min-width:0}
+.side-column{min-width:0;position:sticky;top:24px}
+
+@media (max-width:920px){
+  .dashboard-grid{grid-template-columns:1fr}
+  .side-column{position:static}
+}
 
 /* JOURNAL */
 .journal-intro{
@@ -442,7 +494,8 @@ body{
 }
 .ai-ask-btn:hover{opacity:0.88}
 .ai-ask-btn:disabled{opacity:0.5;cursor:not-allowed}
-.ai-quick-questions{display:flex;gap:8px;margin-top:2px;flex-wrap:wrap}
+.ai-quick-questions{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.ai-quick-q{width:100%}
 .ai-quick-q{
   font-size:12.5px;font-weight:500;padding:9px 14px;border-radius:9px;
   border:1px solid var(--border);background:var(--bg-elevated);
@@ -485,6 +538,33 @@ body{
   .ai-ask-btn{justify-content:center}
 }
 
+/* LIVE EVENTS */
+.live-events-loading{
+  text-align:center;padding:20px;color:var(--text3);font-size:13px;
+}
+.live-event-card{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:11px;padding:11px 14px;margin-bottom:8px;
+}
+.live-event-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.live-event-time{font-size:12px;color:var(--text2);min-width:40px;font-weight:500;flex-shrink:0}
+.live-event-info{min-width:0;flex:1}
+.live-event-title{font-size:13px;font-weight:500;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-event-country{font-size:11px;color:var(--text3)}
+.live-event-data{display:flex;gap:10px;flex-shrink:0;font-size:11.5px}
+.live-event-data span{color:var(--text2)}
+.live-event-data b{color:var(--text);font-weight:500}
+.live-events-empty{
+  text-align:center;padding:20px;color:var(--text3);font-size:13px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:11px;
+}
+
+@media (max-width:480px){
+  .live-event-data{display:none}
+}
+
 @media (max-width:480px){
   .data-row{gap:14px}
   .news-left{gap:8px}
@@ -496,50 +576,69 @@ body{
 <div class="container">
 
   <div class="hero">
-    <canvas id="hero-chart-canvas" class="hero-chart-bg"></canvas>
-    <div class="hero-content">
-      <div class="header">
-        <div class="brand">
-          <div class="brand-icon">📡</div>
-          <div>
-            <div class="brand-name">PulseMarket</div>
+    <div class="hero-top">
+      <canvas id="hero-chart-canvas" class="hero-chart-bg"></canvas>
+      <div class="hero-content">
+        <div class="header">
+          <div class="brand">
+            <div class="brand-icon">📡</div>
+            <div>
+              <div class="brand-name">PulseMarket</div>
+            </div>
+          </div>
+          <div class="live-status">
+            <span class="live-dot"></span>
+            <span id="live-clock" class="mono">Live</span>
           </div>
         </div>
-        <div class="live-status">
-          <span class="live-dot"></span>
-          <span id="live-clock" class="mono">Live</span>
+
+        <div class="hero-eyebrow">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Markt-Cockpit · Live
         </div>
+        <div class="hero-title">Know what moves the market<br>— before it moves.</div>
+        <div class="hero-sub">Wirtschaftskalender, Geopolitik und KI-Erklärungen für Gold, NAS100 und Bitcoin — an einem Ort, in Klartext.</div>
+      </div>
+    </div>
+
+    <div class="stat-grid-hero">
+      <div class="stat-card-hero">
+        <div class="stat-card-icon ic-gold">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8c96a" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
+        </div>
+        <div class="stat-card-label">Gold · XAUUSD</div>
+        <div class="stat-card-value">Bearish</div>
+        <div class="stat-card-trend t-bear">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
+          GDP + PCE belasten
+        </div>
+        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,8 15,12 30,10 45,20 60,18 75,28 90,26" fill="none" stroke="#f87171" stroke-width="2"/></svg>
       </div>
 
-      <div class="hero-eyebrow">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Markt-Cockpit · Live
+      <div class="stat-card-hero">
+        <div class="stat-card-icon ic-nas">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg>
+        </div>
+        <div class="stat-card-label">NAS100</div>
+        <div class="stat-card-value">Bullish</div>
+        <div class="stat-card-trend t-bull">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>
+          Starkes GDP stützt
+        </div>
+        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,28 15,24 30,26 45,16 60,18 75,8 90,10" fill="none" stroke="#34d399" stroke-width="2"/></svg>
       </div>
-      <div class="hero-title">Know what moves the market<br>— before it moves.</div>
-      <div class="hero-sub">Wirtschaftskalender, Geopolitik und KI-Erklärungen für Gold, NAS100 und Bitcoin — an einem Ort, in Klartext.</div>
 
-      <div class="sentiment-row" id="sentiment-row">
-        <div class="sentiment-chip">
-          <span class="sentiment-asset">Gold</span>
-          <span class="sentiment-dir s-bear">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
-            Bearish
-          </span>
+      <div class="stat-card-hero">
+        <div class="stat-card-icon ic-btc">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8a31c" stroke-width="2"><path d="M6 3v18M6 8h9a3 3 0 010 6H6m0 0h10a3 3 0 010 6H6"/></svg>
         </div>
-        <div class="sentiment-chip">
-          <span class="sentiment-asset">NAS100</span>
-          <span class="sentiment-dir s-bull">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>
-            Bullish
-          </span>
+        <div class="stat-card-label">Bitcoin · BTC</div>
+        <div class="stat-card-value">Bearish</div>
+        <div class="stat-card-trend t-bear">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
+          Risk-off Stimmung
         </div>
-        <div class="sentiment-chip">
-          <span class="sentiment-asset">BTC</span>
-          <span class="sentiment-dir s-bear">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
-            Bearish
-          </span>
-        </div>
+        <svg class="stat-card-sparkline" viewBox="0 0 90 36" preserveAspectRatio="none"><polyline points="0,10 15,14 30,12 45,22 60,24 75,30 90,29" fill="none" stroke="#f87171" stroke-width="2"/></svg>
       </div>
     </div>
   </div>
@@ -552,6 +651,8 @@ body{
   </div>
 
   <div id="feed-wrapper">
+  <div class="dashboard-grid">
+  <div class="main-column">
   <div class="filters">
     <button class="pill active" data-filter="all">Alle</button>
     <button class="pill" data-filter="gold">Gold</button>
@@ -562,20 +663,6 @@ body{
   <div class="warn-banner" id="warn-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
-  </div>
-
-  <div class="ai-ask-box">
-    <div class="ai-ask-label">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      Warum bewegt sich der Markt?
-    </div>
-    <div class="ai-quick-questions" id="ai-quick-questions">
-      <button class="ai-quick-q" data-asset="gold">Warum bewegt sich Gold?</button>
-      <button class="ai-quick-q" data-asset="nas">Warum bewegt sich NAS100?</button>
-      <button class="ai-quick-q" data-asset="btc">Warum bewegt sich Bitcoin?</button>
-      <button class="ai-quick-q" data-asset="caution">Heute besonders vorsichtig?</button>
-    </div>
-    <div class="ai-answer-box" id="ai-answer-box"></div>
   </div>
 
   <div class="section-label">Heute · Wirtschaftskalender</div>
@@ -726,23 +813,33 @@ body{
     </a>
   </div>
 
-  <div class="section-label">Nächste 24h</div>
+  <div class="section-label">Heute live · Forex Factory Kalender</div>
 
-  <div class="news-card upcoming" data-asset="gold,nas,btc">
-    <div class="news-top">
-      <div class="news-left">
-        <span class="news-time mono">Mo 08:00</span>
-        <div>
-          <div class="news-title">ISM Manufacturing PMI</div>
-          <div class="news-source">Institute for Supply Management</div>
-        </div>
-      </div>
-      <span class="impact-badge impact-medium">Mittel</span>
-    </div>
+  <div id="live-events-container">
+    <div class="live-events-loading" id="live-events-loading">Lade aktuelle Events...</div>
   </div>
 
   <div class="footer-note">
-    Beispiel-Daten zur Vorschau · Live-Anbindung an Finnhub folgt in Phase 2
+    Live-Kalender via Forex Factory · GDP/PCE/Iran oben sind redaktionelle Tiefen-Analysen
+  </div>
+  </div>
+
+  <div class="side-column">
+    <div class="ai-ask-box">
+      <div class="ai-ask-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Warum bewegt sich der Markt?
+      </div>
+      <div class="ai-quick-questions" id="ai-quick-questions">
+        <button class="ai-quick-q" data-asset="gold">Warum bewegt sich Gold?</button>
+        <button class="ai-quick-q" data-asset="nas">Warum bewegt sich NAS100?</button>
+        <button class="ai-quick-q" data-asset="btc">Warum bewegt sich Bitcoin?</button>
+        <button class="ai-quick-q" data-asset="caution">Heute besonders vorsichtig?</button>
+      </div>
+      <div class="ai-answer-box" id="ai-answer-box"></div>
+    </div>
+  </div>
+
   </div>
   </div>
 
@@ -825,14 +922,74 @@ async function fetchLiveCalendar(){
     const data = await res.json();
     if(statusEl) statusEl.textContent = 'Live verbunden · ' + (data.count || 0) + ' Events heute';
     console.log('Kalenderdaten vom Backend:', data);
+    renderLiveEvents(data.events || []);
     return data;
   } catch(err) {
     if(statusEl) statusEl.textContent = 'Backend noch nicht verbunden — Beispieldaten werden angezeigt';
     console.warn('Backend-Anfrage fehlgeschlagen (erwartet bis Railway eingerichtet ist):', err);
+    renderLiveEvents(null);
     return null;
   }
 }
+
+function impactClass(impact){
+  if(impact === 'High') return 'impact-high';
+  if(impact === 'Medium') return 'impact-medium';
+  return 'impact-low';
+}
+
+function impactLabelDe(impact){
+  if(impact === 'High') return 'Hoch';
+  if(impact === 'Medium') return 'Mittel';
+  return 'Niedrig';
+}
+
+function renderLiveEvents(events){
+  const container = document.getElementById('live-events-container');
+  if(!container) return;
+
+  if(events === null){
+    container.innerHTML = '<div class="live-events-empty">Live-Kalender konnte nicht geladen werden. Backend prüfen.</div>';
+    return;
+  }
+
+  if(events.length === 0){
+    container.innerHTML = '<div class="live-events-empty">Keine weiteren Events für heute im Kalender.</div>';
+    return;
+  }
+
+  container.innerHTML = events.map(ev => {
+    const dataHtml = (ev.actual || ev.forecast || ev.previous)
+      ? `<div class="live-event-data">
+           ${ev.actual ? `<span>Actual <b>${ev.actual}</b></span>` : ''}
+           ${ev.forecast ? `<span>Forecast <b>${ev.forecast}</b></span>` : ''}
+           ${ev.previous ? `<span>Previous <b>${ev.previous}</b></span>` : ''}
+         </div>`
+      : '';
+    return `
+      <div class="live-event-card" data-asset="${(ev.assets || []).join(',')}">
+        <div class="live-event-left">
+          <span class="live-event-time mono">${ev.time}</span>
+          <div class="live-event-info">
+            <div class="live-event-title">${ev.title}</div>
+            <div class="live-event-country">${ev.country}</div>
+          </div>
+        </div>
+        ${dataHtml}
+        <span class="impact-badge ${impactClass(ev.impact)}">${impactLabelDe(ev.impact)}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.querySelectorAll('.live-event-card').forEach(card => {
+    const activeFilter = document.querySelector('.pill.active')?.dataset.filter || 'all';
+    const assets = card.dataset.asset || '';
+    card.style.display = (activeFilter === 'all' || assets.includes(activeFilter)) ? 'flex' : 'none';
+  });
+}
+
 fetchLiveCalendar();
+setInterval(fetchLiveCalendar, 5 * 60 * 1000);
 
 // Live clock
 function updateClock(){
@@ -881,6 +1038,10 @@ document.querySelectorAll('.pill').forEach(pill => {
     document.querySelectorAll('.news-card').forEach(card => {
       const assets = card.dataset.asset || '';
       card.style.display = (filter === 'all' || assets.includes(filter)) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.live-event-card').forEach(card => {
+      const assets = card.dataset.asset || '';
+      card.style.display = (filter === 'all' || assets.includes(filter)) ? 'flex' : 'none';
     });
   });
 });
@@ -1223,4 +1384,3 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
 
 </body>
 </html>
-
