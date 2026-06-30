@@ -163,14 +163,26 @@ body{
 .stat-card-hero:last-child{border-right:none}
 .stat-card-hero:hover{background:rgba(255,255,255,0.02)}
 
+.stat-card-top-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+
 .stat-card-icon{
   display:flex;align-items:center;justify-content:center;
   width:30px;height:30px;border-radius:9px;
-  margin-bottom:14px;
 }
 .stat-card-icon.ic-gold,
 .stat-card-icon.ic-nas,
 .stat-card-icon.ic-btc{background:rgba(201,162,58,0.12)}
+
+.fng-badge{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:8px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+}
+.fng-badge-score{font-size:13px;font-weight:600;color:var(--gold-l)}
 
 .stat-card-label{
   font-size:12px;font-weight:500;color:var(--text2);
@@ -184,16 +196,23 @@ body{
 .stat-card-trend{
   font-size:13px;font-weight:500;
   display:flex;align-items:center;gap:4px;
+  margin-bottom:10px;
 }
 .stat-card-trend.t-bull{color:var(--green-l)}
 .stat-card-trend.t-bear{color:var(--red-l)}
-.stat-card-trend.fng-extreme-fear{color:var(--red-l)}
-.stat-card-trend.fng-fear{color:#e0935a}
-.stat-card-trend.fng-neutral{color:var(--text2)}
-.stat-card-trend.fng-greed{color:#9ad17a}
-.stat-card-trend.fng-extreme-greed{color:var(--green-l)}
+
+.fng-label-row{
+  font-size:11.5px;font-weight:500;
+  padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);
+}
+.fng-label-row.fng-extreme-fear{color:var(--red-l)}
+.fng-label-row.fng-fear{color:#e0935a}
+.fng-label-row.fng-neutral{color:var(--text2)}
+.fng-label-row.fng-greed{color:#9ad17a}
+.fng-label-row.fng-extreme-greed{color:var(--green-l)}
+
 .stat-card-source{
-  font-size:10px;color:var(--text3);margin-top:6px;
+  font-size:10px;color:var(--text3);margin-top:4px;
 }
 .stat-card-sparkline{
   position:absolute;bottom:0;right:0;width:90px;height:36px;opacity:0.5;
@@ -777,32 +796,59 @@ body{
 
     <div class="stat-grid-hero">
       <div class="stat-card-hero">
-        <div class="stat-card-icon ic-gold">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
+        <div class="stat-card-top-row">
+          <div class="stat-card-icon ic-gold">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
+          </div>
+          <div class="fng-badge" id="fng-gold-badge">
+            <span class="fng-badge-score" id="fng-gold-score">—</span>
+          </div>
         </div>
-        <div class="stat-card-label">Gold · Fear &amp; Greed</div>
-        <div class="stat-card-value" id="fng-gold-score">—</div>
-        <div class="stat-card-trend" id="fng-gold-label">Lädt...</div>
+        <div class="stat-card-label">Gold · XAUUSD</div>
+        <div class="stat-card-value">Bearish</div>
+        <div class="stat-card-trend t-bear">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
+          GDP + PCE belasten
+        </div>
+        <div class="fng-label-row" id="fng-gold-label">Fear &amp; Greed lädt...</div>
         <div class="stat-card-source" id="fng-gold-source"></div>
       </div>
 
       <div class="stat-card-hero">
-        <div class="stat-card-icon ic-nas">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg>
+        <div class="stat-card-top-row">
+          <div class="stat-card-icon ic-nas">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg>
+          </div>
+          <div class="fng-badge" id="fng-nas-badge">
+            <span class="fng-badge-score" id="fng-nas-score">—</span>
+          </div>
         </div>
-        <div class="stat-card-label">NAS100 · Fear &amp; Greed</div>
-        <div class="stat-card-value" id="fng-nas-score">—</div>
-        <div class="stat-card-trend" id="fng-nas-label">Lädt...</div>
+        <div class="stat-card-label">NAS100</div>
+        <div class="stat-card-value">Bullish</div>
+        <div class="stat-card-trend t-bull">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>
+          Starkes GDP stützt
+        </div>
+        <div class="fng-label-row" id="fng-nas-label">Fear &amp; Greed lädt...</div>
         <div class="stat-card-source" id="fng-nas-source"></div>
       </div>
 
       <div class="stat-card-hero">
-        <div class="stat-card-icon ic-btc">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M6 3v18M6 8h9a3 3 0 010 6H6m0 0h10a3 3 0 010 6H6"/></svg>
+        <div class="stat-card-top-row">
+          <div class="stat-card-icon ic-btc">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M6 3v18M6 8h9a3 3 0 010 6H6m0 0h10a3 3 0 010 6H6"/></svg>
+          </div>
+          <div class="fng-badge" id="fng-btc-badge">
+            <span class="fng-badge-score" id="fng-btc-score">—</span>
+          </div>
         </div>
-        <div class="stat-card-label">Bitcoin · Fear &amp; Greed</div>
-        <div class="stat-card-value" id="fng-btc-score">—</div>
-        <div class="stat-card-trend" id="fng-btc-label">Lädt...</div>
+        <div class="stat-card-label">Bitcoin · BTC</div>
+        <div class="stat-card-value">Bearish</div>
+        <div class="stat-card-trend t-bear">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
+          Risk-off Stimmung
+        </div>
+        <div class="fng-label-row" id="fng-btc-label">Fear &amp; Greed lädt...</div>
         <div class="stat-card-source" id="fng-btc-source"></div>
       </div>
     </div>
@@ -1151,14 +1197,15 @@ function renderFngCard(prefix, data){
 
   if(!data || data.score == null){
     scoreEl.textContent = '—';
-    labelEl.textContent = 'Nicht verfügbar';
+    labelEl.textContent = 'Fear & Greed nicht verfügbar';
+    labelEl.className = 'fng-label-row fng-neutral';
     if(sourceEl) sourceEl.textContent = '';
     return;
   }
 
   scoreEl.textContent = data.score;
-  labelEl.textContent = fngLabelDe(data.label);
-  labelEl.className = 'stat-card-trend ' + fngColorClass(data.label);
+  labelEl.textContent = `Fear & Greed: ${data.score}/100 · ${fngLabelDe(data.label)}`;
+  labelEl.className = 'fng-label-row ' + fngColorClass(data.label);
   if(sourceEl){
     sourceEl.textContent = data.real
       ? `Quelle: ${data.source}`
