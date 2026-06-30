@@ -565,176 +565,6 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .ai-error{color:var(--red-l)}
 
-/* GOLD CHART & OBSERVATION ENGINE — ACCORDION */
-.gold-chart-section{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:18px;margin-bottom:24px;overflow:hidden;
-}
-.gold-accordion-toggle{
-  width:100%;display:flex;align-items:center;justify-content:space-between;
-  padding:20px 24px;background:transparent;border:none;cursor:pointer;
-  font-family:'Inter',sans-serif;transition:background .15s;
-}
-.gold-accordion-toggle:hover{background:rgba(255,255,255,0.02)}
-.gold-accordion-chevron{color:var(--text3);transition:transform .25s;flex-shrink:0}
-.gold-accordion-chevron.open{transform:rotate(180deg)}
-.gold-accordion-body{
-  max-height:0;overflow:hidden;transition:max-height .35s ease;
-}
-.gold-accordion-body.open{max-height:2400px}
-.gold-accordion-body-inner{padding:0 24px 24px;}
-
-.gold-chart-title{
-  display:flex;align-items:center;gap:10px;
-}
-.gold-chart-title-text{font-size:16px;font-weight:600;color:var(--text)}
-.gold-price-display{font-size:13px;color:var(--text2);font-weight:500}
-.gold-price-display .mono{color:var(--gold-l);font-weight:600;font-size:14px}
-
-.gold-chart-controls{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:14px;flex-wrap:wrap;gap:10px;
-  padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);
-}
-
-.tf-switcher{display:flex;gap:4px;background:var(--bg-elevated);border-radius:9px;padding:3px}
-.tf-btn{
-  padding:6px 14px;border-radius:7px;border:none;background:transparent;
-  color:var(--text2);font-size:12.5px;font-weight:500;cursor:pointer;
-  font-family:'Inter',sans-serif;transition:all .15s;
-}
-.tf-btn.active{background:var(--gold);color:#0a0a0a}
-
-.chart-legend{display:flex;gap:14px;flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
-.legend-dot{width:8px;height:2px;border-radius:1px;display:inline-block}
-.legend-swatch{width:10px;height:10px;border-radius:2px;border:1px solid;display:inline-block}
-
-#gold-chart-container{
-  width:100%;height:380px;border-radius:12px 12px 0 0;overflow:hidden;
-  background:#08080a;border:1px solid rgba(255,255,255,0.05);border-bottom:none;
-}
-#gold-volume-container{
-  width:100%;height:70px;border-radius:0 0 12px 12px;overflow:hidden;
-  background:#08080a;border:1px solid rgba(255,255,255,0.05);margin-bottom:18px;
-}
-.gold-chart-loading{
-  display:flex;align-items:center;justify-content:center;height:380px;
-  color:var(--text3);font-size:13px;
-}
-
-.signal-panel{
-  padding:18px 20px;border-radius:14px;
-  border:1px solid var(--border);
-}
-.signal-panel.signal-long{background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.25)}
-.signal-panel.signal-short{background:rgba(239,83,80,0.06);border-color:rgba(239,83,80,0.25)}
-.signal-panel.signal-neutral{background:rgba(255,255,255,0.03)}
-
-.signal-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px}
-.signal-badge{
-  display:flex;align-items:center;gap:8px;
-  font-size:20px;font-weight:700;letter-spacing:-0.01em;
-}
-.signal-badge.signal-long{color:var(--green-l)}
-.signal-badge.signal-short{color:var(--red-l)}
-.signal-badge.signal-neutral{color:var(--text2)}
-.signal-confidence{
-  font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
-  text-transform:uppercase;letter-spacing:0.04em;
-}
-.signal-confidence.conf-hoch{background:rgba(74,222,128,0.15);color:var(--green-l)}
-.signal-confidence.conf-mittel{background:rgba(201,162,58,0.15);color:var(--gold-l)}
-.signal-confidence.conf-niedrig{background:rgba(255,255,255,0.08);color:var(--text2)}
-
-.signal-reasons{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
-.signal-reason{
-  display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text2);line-height:1.5;
-}
-.signal-reason::before{content:'•';color:var(--gold-l);flex-shrink:0}
-
-.tf-structure-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.tf-structure-card{
-  background:var(--bg-elevated);border-radius:10px;padding:10px 12px;text-align:center;
-}
-.tf-structure-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
-.tf-structure-value{font-size:13px;font-weight:600}
-.tf-structure-value.struct-bullish{color:var(--green-l)}
-.tf-structure-value.struct-bearish{color:var(--red-l)}
-.tf-structure-value.struct-range{color:var(--text2)}
-
-/* SMC CONCEPT BADGES */
-.smc-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.smc-badge{
-  font-size:10.5px;font-weight:500;padding:4px 10px;border-radius:7px;
-  background:var(--bg-elevated);border:1px solid var(--border);color:var(--text2);
-  display:flex;align-items:center;gap:5px;
-}
-.smc-badge.smc-active{color:var(--gold-l);border-color:rgba(232,185,77,0.3)}
-.smc-badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
-
-.premium-discount-bar{
-  margin-top:12px;height:6px;border-radius:3px;
-  background:linear-gradient(90deg, var(--green-l) 0%, var(--text3) 50%, var(--red-l) 100%);
-  position:relative;
-}
-.premium-discount-marker{
-  position:absolute;top:-3px;width:2px;height:12px;background:#fff;
-  border-radius:1px;transform:translateX(-50%);
-}
-.premium-discount-label{
-  display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px;
-}
-
-.gold-disclaimer{
-  font-size:11px;color:var(--text3);line-height:1.6;margin-top:14px;
-  padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);
-}
-
-/* FUNDAMENTALS PANEL */
-.fundamentals-panel{
-  margin-top:16px;padding:18px 20px;border-radius:14px;
-  background:var(--bg-elevated);border:1px solid var(--border);
-}
-.fundamentals-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:14px;flex-wrap:wrap;gap:10px;
-}
-.fundamentals-title{
-  display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--text);
-}
-.fundamentals-bias{
-  font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
-  text-transform:uppercase;letter-spacing:0.03em;
-  background:rgba(255,255,255,0.06);color:var(--text2);
-}
-.fundamentals-bias.fb-bullisch{background:rgba(74,222,128,0.15);color:var(--green-l)}
-.fundamentals-bias.fb-bearisch{background:rgba(239,83,80,0.15);color:var(--red-l)}
-
-.fundamentals-loading{font-size:12.5px;color:var(--text3);padding:8px 0}
-.fundamentals-list{display:flex;flex-direction:column;gap:10px}
-.fundamental-item{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
-  padding:12px 14px;border-radius:10px;background:var(--bg-card);
-  border-left:3px solid var(--text3);
-}
-.fundamental-item.fi-bullish{border-left-color:var(--green-l)}
-.fundamental-item.fi-bearish{border-left-color:var(--red-l)}
-.fundamental-item-left{min-width:0;flex:1}
-.fundamental-item-name{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px}
-.fundamental-item-explanation{font-size:11.5px;color:var(--text2);line-height:1.55}
-.fundamental-item-right{text-align:right;flex-shrink:0}
-.fundamental-item-value{font-size:14px;font-weight:600;color:var(--text);font-family:'JetBrains Mono',monospace}
-.fundamental-item-change{font-size:11px;font-weight:600;margin-top:2px}
-.fundamental-item-change.fc-up{color:var(--green-l)}
-.fundamental-item-change.fc-down{color:var(--red-l)}
-
-@media (max-width:600px){
-  .tf-structure-row{grid-template-columns:1fr}
-  .fundamental-item{flex-direction:column;gap:8px}
-  .fundamental-item-right{text-align:left}
-}
-
 /* GEOPOLITICS — MAIN COLUMN, PREMIUM CARDS */
 .geo-loading{
   text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
@@ -826,8 +656,84 @@ body{
   .data-row{gap:14px}
   .news-left{gap:8px}
 }
+
+/* ============================================ */
+/* UMFASSENDE MOBILE-ANPASSUNG (Handy-Breakpoint) */
+/* ============================================ */
+@media (max-width:640px){
+  .container{
+    padding:18px 14px 70px;
+  }
+
+  /* Hero & Header */
+  .hero{
+    border-radius:18px;
+  }
+  .hero-top{
+    padding:20px 18px 18px;
+  }
+  .brand-icon{width:30px;height:30px}
+  .brand-name{font-size:15px}
+  .live-status{font-size:11px}
+  .hero-eyebrow{font-size:10px;margin-bottom:10px}
+  .hero-title{
+    font-size:24px;line-height:1.18;max-width:100%;margin-bottom:8px;
+  }
+  .hero-sub{font-size:12.5px;max-width:100%;line-height:1.5}
+
+  /* Hero Split (Headline + Kalender/Geo Box) */
+  .hero-split{
+    grid-template-columns:1fr;gap:16px;
+  }
+  .hero-split-right{
+    padding:14px 16px;order:-1;
+  }
+  .header-calendar-label,.header-geo-label{font-size:10px}
+  .header-cal-item-title,.header-geo-item-title{font-size:12px}
+
+  /* Stat Grid — Gold/NAS100/BTC Fear&Greed Karten */
+  .stat-grid-hero{
+    grid-template-columns:1fr;
+  }
+  .stat-card-hero{
+    padding:16px 18px;
+    border-right:none;
+    border-bottom:1px solid rgba(255,255,255,0.07);
+  }
+  .stat-card-hero:last-child{border-bottom:none}
+  .stat-card-value{font-size:24px}
+  .stat-card-icon{width:26px;height:26px}
+
+  /* Dashboard Grid — Hauptspalte + Sidebar */
+  .dashboard-grid{
+    grid-template-columns:1fr;gap:18px;
+  }
+  .side-column{
+    position:static;
+  }
+
+  /* Geopolitik / Trump Karten */
+  .geo-item{padding:14px 16px}
+  .geo-item-title{font-size:13.5px}
+  .section-label{font-size:10.5px;margin:22px 0 10px}
+
+  /* AI Ask Box */
+  .ai-ask-box{padding:14px 16px}
+  .ai-quick-q{font-size:12px;padding:9px 12px}
+
+  /* Live Events (Kalender Sidebar) */
+  .live-event-card{padding:8px 10px}
+  .live-event-title{font-size:11.5px}
+
+  /* Footer */
+  .footer-note{font-size:10.5px}
+}
+
+@media (max-width:380px){
+  .hero-title{font-size:21px}
+  .stat-card-value{font-size:21px}
+}
 </style>
-<script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
 
@@ -946,83 +852,6 @@ body{
   <div class="warn-banner" id="warn-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
-  </div>
-
-  <div class="gold-chart-section">
-    <button class="gold-accordion-toggle" id="gold-accordion-toggle">
-      <div class="gold-chart-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
-        <span class="gold-chart-title-text">Gold · XAUUSD</span>
-        <span class="gold-price-display" id="gold-price-display">Lädt...</span>
-      </div>
-      <svg class="gold-accordion-chevron" id="gold-accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-    </button>
-
-    <div class="gold-accordion-body" id="gold-accordion-body">
-      <div class="gold-accordion-body-inner">
-      <div class="gold-chart-controls">
-        <div class="tf-switcher">
-          <button class="tf-btn active" data-tf="1h">1H</button>
-          <button class="tf-btn" data-tf="4h">4H</button>
-          <button class="tf-btn" data-tf="1d">1D</button>
-        </div>
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-dot" style="background:#e8b94d"></span>EMA 20</span>
-          <span class="legend-item"><span class="legend-dot" style="background:#7c9ef0"></span>EMA 50</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:rgba(74,222,128,0.18);border-color:rgba(74,222,128,0.4)"></span>Order Block</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:rgba(124,158,240,0.14);border-color:rgba(124,158,240,0.35)"></span>Fair Value Gap</span>
-        </div>
-      </div>
-
-      <div id="gold-chart-container">
-        <div class="gold-chart-loading">Lade Chart-Daten...</div>
-      </div>
-
-      <div id="gold-volume-container"></div>
-
-      <div class="signal-panel signal-neutral" id="signal-panel">
-        <div class="signal-top-row">
-          <div class="signal-badge signal-neutral" id="signal-badge">Beobachtung wird berechnet...</div>
-          <span class="signal-confidence conf-niedrig" id="signal-confidence">—</span>
-        </div>
-        <div class="signal-reasons" id="signal-reasons"></div>
-
-        <div class="smc-badges" id="smc-badges"></div>
-
-        <div id="premium-discount-block" style="display:none">
-          <div class="premium-discount-bar">
-            <div class="premium-discount-marker" id="premium-discount-marker" style="left:50%"></div>
-          </div>
-          <div class="premium-discount-label">
-            <span>Discount</span>
-            <span id="premium-discount-text">Equilibrium</span>
-            <span>Premium</span>
-          </div>
-        </div>
-
-        <div class="tf-structure-row" id="tf-structure-row"></div>
-        <div class="gold-disclaimer">
-          Keine Anlageberatung und kein Trading-Signal. Diese Beobachtung fasst automatisch erkannte Marktstruktur-Muster (Trendrichtung, Order Blocks, Fair Value Gaps, Liquidity Sweeps, Premium/Discount) rein zu Bildungs- und Informationszwecken zusammen. Sie stellt keine Kauf- oder Verkaufsempfehlung dar.
-        </div>
-      </div>
-
-      <div class="fundamentals-panel" id="fundamentals-panel">
-        <div class="fundamentals-header">
-          <div class="fundamentals-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg>
-            Fundamentale Faktoren
-          </div>
-          <span class="fundamentals-bias" id="fundamentals-bias">Lädt...</span>
-        </div>
-        <div class="fundamentals-list" id="fundamentals-list">
-          <div class="fundamentals-loading">Lade DXY und US10Y Daten...</div>
-        </div>
-        <div class="gold-disclaimer">
-          Beschreibt historisch beobachtete Korrelationen (Dollar-Stärke, Realrenditen) zu Bildungszwecken. Keine Anlageberatung.
-        </div>
-      </div>
-      </div>
-    </div>
   </div>
 
   <div class="section-label section-label-trump">
@@ -1373,392 +1202,6 @@ async function fetchFearAndGreed(){
 
 fetchFearAndGreed();
 setInterval(fetchFearAndGreed, 5 * 60 * 1000);
-
-// ============ GOLD CHART (Lightweight Charts) — mit EMA + Volume ============
-let goldChart = null;
-let goldCandleSeries = null;
-let goldEma20Series = null;
-let goldEma50Series = null;
-let goldVolumeChart = null;
-let goldVolumeSeries = null;
-let currentTimeframe = '1h';
-let goldChartInitialized = false;
-
-function createSeriesCompat(chart, seriesType, options){
-  if(typeof chart.addCandlestickSeries === 'function' && seriesType === 'candlestick'){
-    return chart.addCandlestickSeries(options);
-  }
-  if(typeof chart.addLineSeries === 'function' && seriesType === 'line'){
-    return chart.addLineSeries(options);
-  }
-  if(typeof chart.addHistogramSeries === 'function' && seriesType === 'histogram'){
-    return chart.addHistogramSeries(options);
-  }
-  // v5 fallback
-  if(typeof chart.addSeries === 'function'){
-    const typeMap = {
-      candlestick: LightweightCharts.CandlestickSeries,
-      line: LightweightCharts.LineSeries,
-      histogram: LightweightCharts.HistogramSeries,
-    };
-    if(typeMap[seriesType]) return chart.addSeries(typeMap[seriesType], options);
-  }
-  throw new Error(`Konnte Serie vom Typ ${seriesType} nicht erstellen — Bibliotheksversion prüfen`);
-}
-
-function initGoldChart(){
-  const container = document.getElementById('gold-chart-container');
-  const volContainer = document.getElementById('gold-volume-container');
-  if(!container) return;
-
-  if(typeof LightweightCharts === 'undefined'){
-    container.innerHTML = '<div class="gold-chart-loading">Chart-Bibliothek konnte nicht geladen werden.</div>';
-    console.error('LightweightCharts ist nicht definiert — Script-Tag prüfen.');
-    return;
-  }
-
-  container.innerHTML = '';
-  if(volContainer) volContainer.innerHTML = '';
-
-  const sharedLayout = {
-    background: { color: 'transparent' },
-    textColor: '#8a8a85',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: 11,
-  };
-  const sharedGrid = {
-    vertLines: { color: 'rgba(255,255,255,0.035)' },
-    horzLines: { color: 'rgba(255,255,255,0.035)' },
-  };
-
-  try {
-    goldChart = LightweightCharts.createChart(container, {
-      width: container.clientWidth,
-      height: 380,
-      layout: sharedLayout,
-      grid: sharedGrid,
-      rightPriceScale: { borderColor: 'rgba(255,255,255,0.08)' },
-      timeScale: { borderColor: 'rgba(255,255,255,0.08)', timeVisible: true, secondsVisible: false, visible: false },
-      crosshair: {
-        vertLine: { color: 'rgba(232,185,77,0.35)', labelBackgroundColor: '#1a1a1a' },
-        horzLine: { color: 'rgba(232,185,77,0.35)', labelBackgroundColor: '#1a1a1a' },
-      },
-    });
-
-    goldCandleSeries = createSeriesCompat(goldChart, 'candlestick', {
-      upColor: '#4ade80', downColor: '#ef5350',
-      borderUpColor: '#4ade80', borderDownColor: '#ef5350',
-      wickUpColor: '#4ade80', wickDownColor: '#ef5350',
-    });
-
-    goldEma20Series = createSeriesCompat(goldChart, 'line', {
-      color: '#e8b94d', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
-    });
-    goldEma50Series = createSeriesCompat(goldChart, 'line', {
-      color: '#7c9ef0', lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
-    });
-
-    if(volContainer){
-      goldVolumeChart = LightweightCharts.createChart(volContainer, {
-        width: volContainer.clientWidth,
-        height: 70,
-        layout: sharedLayout,
-        grid: { vertLines: { color: 'transparent' }, horzLines: { color: 'rgba(255,255,255,0.035)' } },
-        rightPriceScale: { borderColor: 'rgba(255,255,255,0.08)' },
-        timeScale: { borderColor: 'rgba(255,255,255,0.08)', timeVisible: true, secondsVisible: false },
-        crosshair: { vertLine: { color: 'rgba(232,185,77,0.35)' }, horzLine: { visible: false, labelVisible: false } },
-      });
-      goldVolumeSeries = createSeriesCompat(goldVolumeChart, 'histogram', {
-        priceFormat: { type: 'volume' }, priceLineVisible: false,
-      });
-
-      // Beide Charts synchron scrollen/zoomen
-      goldChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
-        if(range) goldVolumeChart.timeScale().setVisibleLogicalRange(range);
-      });
-      goldVolumeChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
-        if(range) goldChart.timeScale().setVisibleLogicalRange(range);
-      });
-    }
-
-    window.addEventListener('resize', () => {
-      if(goldChart) goldChart.applyOptions({ width: container.clientWidth });
-      if(goldVolumeChart && volContainer) goldVolumeChart.applyOptions({ width: volContainer.clientWidth });
-    });
-
-    goldChartInitialized = true;
-  } catch(err) {
-    console.error('Konnte Gold-Chart nicht initialisieren:', err);
-    container.innerHTML = '<div class="gold-chart-loading">Chart konnte nicht initialisiert werden — Bibliotheksversion prüfen.</div>';
-  }
-}
-
-async function loadGoldCandles(timeframe){
-  const container = document.getElementById('gold-chart-container');
-  try {
-    const res = await fetch(`${BACKEND_URL}/gold/candles/${timeframe}`);
-    if(!res.ok) throw new Error('Gold candles request failed: ' + res.status);
-    const data = await res.json();
-
-    if(!goldChartInitialized) initGoldChart();
-    if(!goldCandleSeries) return;
-
-    const formatted = (data.candles || []).map(c => ({
-      time: c.time, open: c.open, high: c.high, low: c.low, close: c.close,
-    }));
-
-    goldCandleSeries.setData(formatted);
-
-    if(goldEma20Series) goldEma20Series.setData((data.ema20 || []).map(p => ({ time: p.time, value: p.value })));
-    if(goldEma50Series) goldEma50Series.setData((data.ema50 || []).map(p => ({ time: p.time, value: p.value })));
-
-    if(goldVolumeSeries){
-      const volData = (data.candles || []).map(c => ({
-        time: c.time,
-        value: c.volume || 0,
-        color: c.close >= c.open ? 'rgba(74,222,128,0.5)' : 'rgba(239,83,80,0.5)',
-      }));
-      goldVolumeSeries.setData(volData);
-    }
-
-    goldChart.timeScale().fitContent();
-    if(goldVolumeChart) goldVolumeChart.timeScale().fitContent();
-
-    const last = formatted[formatted.length - 1];
-    const priceDisplay = document.getElementById('gold-price-display');
-    if(priceDisplay && last){
-      priceDisplay.innerHTML = `<span class="mono">${last.close.toFixed(2)}</span> USD`;
-    }
-
-    if(lastObservationData) markupChartWithSMC(lastObservationData);
-  } catch(err) {
-    console.warn('Gold-Kerzendaten Anfrage fehlgeschlagen:', err);
-    if(container) container.innerHTML = '<div class="gold-chart-loading">Chart-Daten nicht verfügbar — Backend prüfen.</div>';
-  }
-}
-
-document.querySelectorAll('.tf-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTimeframe = btn.dataset.tf;
-    loadGoldCandles(currentTimeframe);
-  });
-});
-
-// ============ AKKORDEON — Gold-Bereich startet zugeklappt ============
-let goldSectionEverOpened = false;
-const goldToggleBtn = document.getElementById('gold-accordion-toggle');
-const goldBody = document.getElementById('gold-accordion-body');
-const goldChevron = document.getElementById('gold-accordion-chevron');
-
-if(goldToggleBtn && goldBody){
-  goldToggleBtn.addEventListener('click', () => {
-    const isOpen = goldBody.classList.toggle('open');
-    goldChevron.classList.toggle('open', isOpen);
-    if(isOpen && !goldSectionEverOpened){
-      goldSectionEverOpened = true;
-      loadGoldCandles(currentTimeframe);
-      fetchGoldObservation();
-      fetchGoldFundamentals();
-    }
-  });
-}
-
-// ============ GOLD BEOBACHTUNG (kein Trading-Signal) ============
-function structureClassDe(structure){
-  const map = { Bullish: 'struct-bullish', Bearish: 'struct-bearish', Range: 'struct-range' };
-  return map[structure] || 'struct-range';
-}
-
-function structureLabelDe(structure){
-  const map = { Bullish: 'Bullisch', Bearish: 'Bearisch', Range: 'Range' };
-  return map[structure] || structure;
-}
-
-let lastObservationData = null;
-
-async function fetchGoldObservation(){
-  const panel = document.getElementById('signal-panel');
-  const badge = document.getElementById('signal-badge');
-  const confidenceEl = document.getElementById('signal-confidence');
-  const reasonsEl = document.getElementById('signal-reasons');
-  const tfRow = document.getElementById('tf-structure-row');
-  const smcBadges = document.getElementById('smc-badges');
-  const pdBlock = document.getElementById('premium-discount-block');
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/gold/observation`);
-    if(!res.ok) throw new Error('Observation request failed: ' + res.status);
-    const data = await res.json();
-    lastObservationData = data;
-
-    const biasClass = data.bias === 'Bullisch' ? 'signal-long' : data.bias === 'Bearisch' ? 'signal-short' : 'signal-neutral';
-    const strengthClass = 'conf-' + (data.biasStrength || 'niedrig').toLowerCase();
-
-    panel.className = 'signal-panel ' + biasClass;
-    badge.className = 'signal-badge ' + biasClass;
-    badge.innerHTML = data.bias === 'Bullisch'
-      ? '↑ Beobachtung: Bullisch'
-      : data.bias === 'Bearisch'
-      ? '↓ Beobachtung: Bearisch'
-      : '— Beobachtung: Neutral';
-
-    confidenceEl.className = 'signal-confidence ' + strengthClass;
-    confidenceEl.textContent = `Konfluenz: ${data.biasStrength || 'Niedrig'} (${data.bullScore ?? 0} bullisch vs ${data.bearScore ?? 0} bearisch von ${data.totalScore ?? 0} Faktoren)`;
-
-    reasonsEl.innerHTML = (data.reasons || []).map(r => `<div class="signal-reason">${r}</div>`).join('');
-
-    const badges = [];
-    if(data.liquiditySweep){
-      badges.push({ label: data.liquiditySweep.type === 'bullish_sweep' ? 'Bullish Sweep erkannt' : 'Bearish Sweep erkannt', active: true });
-    }
-    if(data.wyckoffClimax){
-      badges.push({ label: data.wyckoffClimax.type === 'selling_climax' ? 'Wyckoff Selling Climax' : 'Wyckoff Buying Climax', active: true });
-    }
-    const obCount = (data.orderBlocks?.bullish?.length || 0) + (data.orderBlocks?.bearish?.length || 0);
-    badges.push({ label: `${obCount} Order Block${obCount === 1 ? '' : 's'}`, active: obCount > 0 });
-    const fvgCount = data.fvgs?.length || 0;
-    badges.push({ label: `${fvgCount} offene FVG${fvgCount === 1 ? '' : 's'}`, active: fvgCount > 0 });
-    if(data.equalLevels?.equalHighs) badges.push({ label: 'Equal Highs', active: true });
-    if(data.equalLevels?.equalLows) badges.push({ label: 'Equal Lows', active: true });
-
-    smcBadges.innerHTML = badges.map(b => `
-      <span class="smc-badge ${b.active ? 'smc-active' : ''}">
-        <span class="smc-badge-dot"></span>${b.label}
-      </span>
-    `).join('');
-
-    if(data.premiumDiscount){
-      pdBlock.style.display = 'block';
-      const pos = Math.max(0, Math.min(100, data.premiumDiscount.position));
-      document.getElementById('premium-discount-marker').style.left = pos + '%';
-      document.getElementById('premium-discount-text').textContent = data.premiumDiscount.zone + ' · ' + pos + '%';
-    } else {
-      pdBlock.style.display = 'none';
-    }
-
-    const tfs = data.timeframes || {};
-    tfRow.innerHTML = ['h1', 'h4', 'd1'].map(key => {
-      const tf = tfs[key];
-      if(!tf) return '';
-      return `
-        <div class="tf-structure-card">
-          <div class="tf-structure-label">${key.toUpperCase()}</div>
-          <div class="tf-structure-value ${structureClassDe(tf.structure)}">${structureLabelDe(tf.structure)}</div>
-        </div>
-      `;
-    }).join('');
-
-    markupChartWithSMC(data);
-  } catch(err) {
-    console.warn('Gold-Beobachtung Anfrage fehlgeschlagen:', err);
-    badge.textContent = 'Beobachtung nicht verfügbar';
-  }
-}
-
-// ============ FUNDAMENTALE FAKTOREN — DXY & US10Y ============
-function biasClassDe(bias){
-  const map = { Bullisch: 'fb-bullisch', Bearisch: 'fb-bearisch' };
-  return map[bias] || '';
-}
-
-async function fetchGoldFundamentals(){
-  const biasEl = document.getElementById('fundamentals-bias');
-  const listEl = document.getElementById('fundamentals-list');
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/gold/fundamentals`);
-    if(!res.ok) throw new Error('Fundamentals request failed: ' + res.status);
-    const data = await res.json();
-
-    biasEl.className = 'fundamentals-bias ' + biasClassDe(data.fundamentalBias);
-    biasEl.textContent = data.fundamentalBias || 'Neutral';
-
-    if(!data.factors || data.factors.length === 0){
-      listEl.innerHTML = '<div class="fundamentals-loading">Keine fundamentalen Daten verfügbar.</div>';
-      return;
-    }
-
-    listEl.innerHTML = data.factors.map(f => {
-      const itemClass = f.implication === 'bullish' ? 'fi-bullish' : f.implication === 'bearish' ? 'fi-bearish' : '';
-      const changeClass = f.changePercent > 0 ? 'fc-up' : f.changePercent < 0 ? 'fc-down' : '';
-      const changeSign = f.changePercent > 0 ? '+' : '';
-      return `
-        <div class="fundamental-item ${itemClass}">
-          <div class="fundamental-item-left">
-            <div class="fundamental-item-name">${f.name}</div>
-            <div class="fundamental-item-explanation">${f.explanation}</div>
-          </div>
-          <div class="fundamental-item-right">
-            <div class="fundamental-item-value">${f.value}</div>
-            <div class="fundamental-item-change ${changeClass}">${changeSign}${f.changePercent.toFixed(2)}%</div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  } catch(err) {
-    console.warn('Fundamentale Daten Anfrage fehlgeschlagen:', err);
-    biasEl.textContent = 'Nicht verfügbar';
-    listEl.innerHTML = '<div class="fundamentals-loading">Fundamentale Daten gerade nicht erreichbar.</div>';
-  }
-}
-
-// Zeichnet Order Blocks und FVGs als markierte Preiszonen auf den Chart —
-// keine SL/TP Linien mehr, rein informative Strukturmarkierungen.
-let smcPriceLines = [];
-function markupChartWithSMC(data){
-  if(!goldCandleSeries) return;
-
-  smcPriceLines.forEach(line => {
-    try { goldCandleSeries.removePriceLine(line); } catch(e){}
-  });
-  smcPriceLines = [];
-
-  (data.orderBlocks?.bullish || []).forEach(ob => {
-    smcPriceLines.push(goldCandleSeries.createPriceLine({
-      price: ob.low,
-      color: 'rgba(74,222,128,0.55)',
-      lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-      axisLabelVisible: true,
-      title: 'OB+',
-    }));
-  });
-
-  (data.orderBlocks?.bearish || []).forEach(ob => {
-    smcPriceLines.push(goldCandleSeries.createPriceLine({
-      price: ob.high,
-      color: 'rgba(239,83,80,0.55)',
-      lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
-      axisLabelVisible: true,
-      title: 'OB-',
-    }));
-  });
-
-  (data.fvgs || []).slice(0, 3).forEach(fvg => {
-    const mid = (fvg.top + fvg.bottom) / 2;
-    smcPriceLines.push(goldCandleSeries.createPriceLine({
-      price: mid,
-      color: fvg.type === 'bullish' ? 'rgba(124,158,240,0.4)' : 'rgba(124,158,240,0.4)',
-      lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dotted,
-      axisLabelVisible: true,
-      title: 'FVG',
-    }));
-  });
-}
-
-// Chart wird erst initialisiert, wenn der Akkordeon-Bereich zum ersten Mal geöffnet wird —
-// spart Ladezeit, solange der Nutzer den Bereich nicht braucht.
-setInterval(() => {
-  if(goldSectionEverOpened){
-    loadGoldCandles(currentTimeframe);
-    fetchGoldObservation();
-    fetchGoldFundamentals();
-  }
-}, 2 * 60 * 1000);
 
 // Live clock
 function updateClock(){
