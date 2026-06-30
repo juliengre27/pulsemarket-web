@@ -456,29 +456,6 @@ body{
   text-align:center;
 }
 
-/* MAIN TABS */
-.main-tabs{
-  display:flex;gap:4px;margin-bottom:24px;
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:12px;padding:4px;
-  max-width:420px;
-}
-.main-tab{
-  flex:1;padding:9px;border-radius:7px;
-  border:none;background:transparent;
-  color:var(--text2);font-size:13px;font-weight:500;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  transition:all .15s;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-}
-.main-tab.active{background:var(--gold);color:#0a0a0a}
-.journal-count-badge{
-  background:rgba(255,255,255,0.2);
-  border-radius:10px;padding:1px 7px;font-size:10.5px;
-}
-.view-hidden{display:none}
-
 /* DASHBOARD GRID — two columns for wider layout */
 .dashboard-grid{
   display:grid;
@@ -492,111 +469,6 @@ body{
 @media (max-width:920px){
   .dashboard-grid{grid-template-columns:1fr}
   .side-column{position:static}
-}
-
-/* JOURNAL */
-.journal-intro{
-  font-size:12.5px;color:var(--text2);line-height:1.6;
-  margin-bottom:18px;padding:13px 15px;
-  background:rgba(201,162,58,0.06);border-radius:9px;
-}
-
-.journal-stats{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
-  margin-bottom:20px;
-}
-.stat-card{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:12px;padding:14px;text-align:center;
-}
-.stat-card-val{font-size:22px;font-weight:600}
-.stat-card-label{font-size:10.5px;color:var(--text3);margin-top:4px;
-  text-transform:uppercase;letter-spacing:0.03em}
-
-.journal-form{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:14px;padding:18px;margin-bottom:24px;
-}
-.form-row{display:flex;gap:12px;margin-bottom:14px}
-.form-row:last-of-type{margin-bottom:0}
-.form-field{flex:1}
-.form-field label{
-  display:block;font-size:11px;color:var(--text2);
-  margin-bottom:6px;font-weight:500;
-}
-.form-field select, .form-field input{
-  width:100%;padding:9px 11px;border-radius:8px;
-  border:1px solid var(--border);background:var(--bg-elevated);
-  color:var(--text);font-size:13px;font-family:'Inter',sans-serif;
-}
-.form-field select:focus, .form-field input:focus{
-  outline:none;border-color:var(--purple);
-}
-
-.toggle-group{display:flex;gap:6px}
-.toggle-btn{
-  flex:1;padding:9px 8px;border-radius:8px;
-  border:1px solid var(--border);background:var(--bg-elevated);
-  color:var(--text2);font-size:12px;font-weight:500;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  transition:all .15s;
-}
-.toggle-btn.active{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
-.toggle-btn.result-win.active{background:var(--green);border-color:var(--green)}
-.toggle-btn.result-loss.active{background:var(--red);border-color:var(--red)}
-.toggle-btn.result-be.active{background:var(--amber);border-color:var(--amber)}
-
-.add-trade-btn{
-  width:100%;padding:11px;margin-top:16px;
-  border-radius:9px;border:none;
-  background:var(--gold);color:#1a1408;
-  font-size:13.5px;font-weight:600;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  transition:opacity .15s;
-}
-.add-trade-btn:hover{opacity:0.88}
-
-.journal-item{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:12px;padding:13px 16px;margin-bottom:8px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-}
-.journal-item-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.journal-item-asset{font-size:13.5px;font-weight:600;min-width:62px}
-.journal-item-meta{font-size:11.5px;color:var(--text3)}
-.journal-item-note{font-size:11.5px;color:var(--text2);font-style:italic;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-.journal-item-badges{display:flex;gap:6px;flex-shrink:0}
-.j-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px}
-.j-checked-yes{background:rgba(201,162,58,0.15);color:var(--purple-l)}
-.j-checked-no{background:rgba(139,133,176,0.12);color:var(--text2)}
-.j-result-win{background:rgba(5,150,105,0.15);color:var(--green-l)}
-.j-result-loss{background:rgba(220,38,38,0.15);color:var(--red-l)}
-.j-result-be{background:rgba(201,168,76,0.15);color:var(--amber-l)}
-.journal-delete{
-  background:none;border:none;color:var(--text3);
-  cursor:pointer;padding:4px;font-size:14px;flex-shrink:0;
-}
-.journal-delete:hover{color:var(--red-l)}
-
-.journal-empty{
-  text-align:center;padding:30px 16px;color:var(--text3);font-size:13px;
-}
-
-.reset-journal-btn{
-  width:100%;margin-top:16px;padding:10px;
-  border-radius:9px;border:1px solid var(--border);
-  background:transparent;color:var(--text3);font-size:12px;
-  cursor:pointer;font-family:'Inter',sans-serif;
-}
-.reset-journal-btn:hover{color:var(--red-l);border-color:rgba(220,38,38,0.3)}
-
-@media (max-width:480px){
-  .form-row{flex-direction:column;gap:10px}
-  .journal-stats{grid-template-columns:repeat(3,1fr);gap:8px}
-  .stat-card{padding:10px}
-  .stat-card-val{font-size:18px}
-  .journal-item-note{display:none}
 }
 
 /* AI ASK BOX */
@@ -856,11 +728,6 @@ body{
 
   <div id="api-status" style="font-size:11px;color:var(--text3);margin-bottom:16px;text-align:right">Verbinde mit Finnhub...</div>
 
-  <div class="main-tabs">
-    <button class="main-tab active" data-view="feed">News Feed</button>
-    <button class="main-tab" data-view="journal">Trade Journal <span id="journal-count" class="journal-count-badge" style="display:none">0</span></button>
-  </div>
-
   <div id="feed-wrapper">
   <div class="dashboard-grid">
   <div class="main-column">
@@ -909,69 +776,6 @@ body{
   </div>
 
   </div>
-  </div>
-
-  <div id="journal-section" class="view-hidden">
-
-    <div class="journal-intro">
-      Trägst du jeden Trade ein, siehst du nach ein paar Wochen ehrlich, ob PulseMarket deine Trefferquote wirklich verbessert — nicht nur das Gefühl.
-    </div>
-
-    <div class="journal-stats" id="journal-stats"></div>
-
-    <div class="journal-form">
-      <div class="form-row">
-        <div class="form-field">
-          <label>Asset</label>
-          <select id="f-asset">
-            <option value="Gold">Gold</option>
-            <option value="NAS100">NAS100</option>
-            <option value="BTC">BTC</option>
-            <option value="EUR/USD">EUR/USD</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label>Richtung</label>
-          <select id="f-direction">
-            <option value="Long">Long</option>
-            <option value="Short">Short</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-field">
-          <label>PulseMarket vorher gecheckt?</label>
-          <div class="toggle-group">
-            <button class="toggle-btn active" data-check="yes">Ja</button>
-            <button class="toggle-btn" data-check="no">Nein</button>
-          </div>
-        </div>
-        <div class="form-field">
-          <label>Ergebnis</label>
-          <div class="toggle-group">
-            <button class="toggle-btn result-win active" data-result="win">Gewinn</button>
-            <button class="toggle-btn result-loss" data-result="loss">Verlust</button>
-            <button class="toggle-btn result-be" data-result="be">Break-Even</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-field" style="flex:1">
-          <label>Notiz (optional)</label>
-          <input type="text" id="f-note" placeholder="z.B. nach GDP-Release, Higher Low bestätigt">
-        </div>
-      </div>
-
-      <button class="add-trade-btn" id="add-trade-btn">+ Trade eintragen</button>
-    </div>
-
-    <div class="section-label">Verlauf</div>
-    <div id="journal-list"></div>
-
-    <button class="reset-journal-btn" id="reset-journal-btn">Journal zurücksetzen</button>
-
   </div>
 
 </div>
@@ -1085,13 +889,16 @@ function updateHeaderCalendar(events){
     return;
   }
 
-  const highImpact = events.filter(ev => ev.impact === 'High');
-  const relevant = highImpact.length > 0 ? highImpact : events.filter(ev => ev.impact === 'Medium');
-  const display = relevant.length > 0 ? relevant : events;
+  const usHighImpact = events.filter(ev => ev.impact === 'High' && ev.country === 'USD');
 
-  listEl.innerHTML = display.slice(0, 4).map(ev => `
+  if(usHighImpact.length === 0){
+    listEl.innerHTML = '<span class="header-cal-empty">Keine roten USA-News heute</span>';
+    return;
+  }
+
+  listEl.innerHTML = usHighImpact.slice(0, 6).map(ev => `
     <div class="header-cal-item">
-      <span class="header-cal-item-dot ${ev.impact === 'High' ? 'impact-high-dot' : 'impact-medium-dot'}"></span>
+      <span class="header-cal-item-dot impact-high-dot"></span>
       <div class="header-cal-item-body">
         <span class="header-cal-item-time mono">${ev.time} Uhr</span>
         <div class="header-cal-item-title">${ev.title}</div>
@@ -1256,16 +1063,6 @@ function updateCountdown(){
 updateCountdown();
 setInterval(updateCountdown, 30000);
 
-// ============ TAB SWITCHING ============
-document.querySelectorAll('.main-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const view = tab.dataset.view;
-    document.getElementById('feed-wrapper').classList.toggle('view-hidden', view !== 'feed');
-    document.getElementById('journal-section').classList.toggle('view-hidden', view !== 'journal');
-  });
-});
 
 // ============ ASSET FILTER PILLS ============
 document.querySelectorAll('.pill').forEach(pill => {
@@ -1283,145 +1080,6 @@ document.querySelectorAll('.pill').forEach(pill => {
     });
   });
 });
-
-// ============ TRADE JOURNAL ============
-const JOURNAL_KEY = 'pulsemarket_journal';
-
-function getJournal(){
-  try {
-    return JSON.parse(localStorage.getItem(JOURNAL_KEY)) || [];
-  } catch(e) {
-    return [];
-  }
-}
-
-function saveJournal(entries){
-  localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries));
-}
-
-let selectedChecked = 'yes';
-let selectedResult = 'win';
-
-document.querySelectorAll('[data-check]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-check]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedChecked = btn.dataset.check;
-  });
-});
-
-document.querySelectorAll('[data-result]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-result]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedResult = btn.dataset.result;
-  });
-});
-
-document.getElementById('add-trade-btn').addEventListener('click', () => {
-  const entries = getJournal();
-  const entry = {
-    id: Date.now(),
-    date: new Date().toLocaleDateString('de-DE'),
-    time: new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
-    asset: document.getElementById('f-asset').value,
-    direction: document.getElementById('f-direction').value,
-    checked: selectedChecked,
-    result: selectedResult,
-    note: document.getElementById('f-note').value.trim(),
-  };
-  entries.unshift(entry);
-  saveJournal(entries);
-  document.getElementById('f-note').value = '';
-  renderJournal();
-});
-
-document.getElementById('reset-journal-btn').addEventListener('click', () => {
-  if(confirm('Wirklich alle Journal-Einträge löschen? Das kann nicht rückgängig gemacht werden.')){
-    localStorage.removeItem(JOURNAL_KEY);
-    renderJournal();
-  }
-});
-
-function deleteEntry(id){
-  const entries = getJournal().filter(e => e.id !== id);
-  saveJournal(entries);
-  renderJournal();
-}
-
-function renderStats(entries){
-  const statsEl = document.getElementById('journal-stats');
-
-  const withCheck = entries.filter(e => e.checked === 'yes');
-  const withoutCheck = entries.filter(e => e.checked === 'no');
-
-  const winRate = (list) => {
-    const decided = list.filter(e => e.result !== 'be');
-    if(decided.length === 0) return null;
-    const wins = decided.filter(e => e.result === 'win').length;
-    return Math.round((wins / decided.length) * 100);
-  };
-
-  const checkedRate = winRate(withCheck);
-  const uncheckedRate = winRate(withoutCheck);
-
-  statsEl.innerHTML = `
-    <div class="stat-card">
-      <div class="stat-card-val">${entries.length}</div>
-      <div class="stat-card-label">Trades gesamt</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val" style="color:var(--green-l)">${checkedRate !== null ? checkedRate + '%' : '—'}</div>
-      <div class="stat-card-label">Winrate mit Check (${withCheck.length})</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val" style="color:var(--text2)">${uncheckedRate !== null ? uncheckedRate + '%' : '—'}</div>
-      <div class="stat-card-label">Winrate ohne Check (${withoutCheck.length})</div>
-    </div>
-  `;
-}
-
-function renderJournalList(entries){
-  const listEl = document.getElementById('journal-list');
-
-  if(entries.length === 0){
-    listEl.innerHTML = '<div class="journal-empty">Noch keine Trades eingetragen. Trag deinen ersten Trade oben ein.</div>';
-    return;
-  }
-
-  const resultLabel = { win: 'Gewinn', loss: 'Verlust', be: 'Break-Even' };
-
-  listEl.innerHTML = entries.map(e => `
-    <div class="journal-item">
-      <div class="journal-item-left">
-        <span class="journal-item-asset">${e.asset}</span>
-        <span class="journal-item-meta">${e.direction} · ${e.date} ${e.time}</span>
-        ${e.note ? `<span class="journal-item-note">${e.note}</span>` : ''}
-      </div>
-      <div class="journal-item-badges">
-        <span class="j-badge ${e.checked === 'yes' ? 'j-checked-yes' : 'j-checked-no'}">${e.checked === 'yes' ? 'Geprüft' : 'Ungeprüft'}</span>
-        <span class="j-badge j-result-${e.result}">${resultLabel[e.result]}</span>
-      </div>
-      <button class="journal-delete" onclick="deleteEntry(${e.id})" aria-label="Eintrag löschen">✕</button>
-    </div>
-  `).join('');
-}
-
-function renderJournal(){
-  const entries = getJournal();
-  renderStats(entries);
-  renderJournalList(entries);
-
-  const countBadge = document.getElementById('journal-count');
-  if(entries.length > 0){
-    countBadge.textContent = entries.length;
-    countBadge.style.display = 'inline';
-  } else {
-    countBadge.style.display = 'none';
-  }
-}
-
-renderJournal();
 
 // ============ REGELBASIERTE MARKT-ERKLÄRUNG ============
 // Kein API-Key nötig — Logik basiert auf den Live-Daten der News-Karten.
