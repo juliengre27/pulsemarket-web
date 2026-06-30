@@ -536,6 +536,123 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .ai-error{color:var(--red-l)}
 
+/* GOLD CHART & SIGNAL ENGINE */
+.gold-chart-section{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:18px;padding:22px 24px;margin-bottom:24px;
+}
+.gold-chart-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;flex-wrap:wrap;gap:12px;
+}
+.gold-chart-title{
+  display:flex;align-items:center;gap:10px;
+}
+.gold-chart-title-text{font-size:16px;font-weight:600}
+.gold-price-display{font-size:13px;color:var(--text2);font-weight:500}
+.gold-price-display .mono{color:var(--gold-l);font-weight:600;font-size:14px}
+
+.tf-switcher{display:flex;gap:4px;background:var(--bg-elevated);border-radius:9px;padding:3px}
+.tf-btn{
+  padding:6px 14px;border-radius:7px;border:none;background:transparent;
+  color:var(--text2);font-size:12.5px;font-weight:500;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .15s;
+}
+.tf-btn.active{background:var(--gold);color:#0a0a0a}
+
+#gold-chart-container{
+  width:100%;height:340px;border-radius:12px;overflow:hidden;
+  background:#0a0a0a;
+}
+.gold-chart-loading{
+  display:flex;align-items:center;justify-content:center;height:340px;
+  color:var(--text3);font-size:13px;
+}
+
+.signal-panel{
+  margin-top:18px;padding:18px 20px;border-radius:14px;
+  border:1px solid var(--border);
+}
+.signal-panel.signal-long{background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.25)}
+.signal-panel.signal-short{background:rgba(239,83,80,0.06);border-color:rgba(239,83,80,0.25)}
+.signal-panel.signal-neutral{background:rgba(255,255,255,0.03)}
+
+.signal-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.signal-badge{
+  display:flex;align-items:center;gap:8px;
+  font-size:20px;font-weight:700;letter-spacing:-0.01em;
+}
+.signal-badge.signal-long{color:var(--green-l)}
+.signal-badge.signal-short{color:var(--red-l)}
+.signal-badge.signal-neutral{color:var(--text2)}
+.signal-confidence{
+  font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.signal-confidence.conf-hoch{background:rgba(74,222,128,0.15);color:var(--green-l)}
+.signal-confidence.conf-mittel{background:rgba(201,162,58,0.15);color:var(--gold-l)}
+.signal-confidence.conf-niedrig{background:rgba(255,255,255,0.08);color:var(--text2)}
+
+.signal-reasons{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.signal-reason{
+  display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text2);line-height:1.5;
+}
+.signal-reason::before{content:'•';color:var(--gold-l);flex-shrink:0}
+
+.tf-structure-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.tf-structure-card{
+  background:var(--bg-elevated);border-radius:10px;padding:10px 12px;text-align:center;
+}
+.tf-structure-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.tf-structure-value{font-size:13px;font-weight:600}
+.tf-structure-value.struct-bullish{color:var(--green-l)}
+.tf-structure-value.struct-bearish{color:var(--red-l)}
+.tf-structure-value.struct-range{color:var(--text2)}
+
+/* SL/TP DISPLAY */
+.sltp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.sltp-card{
+  background:var(--bg-elevated);border-radius:10px;padding:10px 12px;text-align:center;
+}
+.sltp-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.sltp-value{font-size:14px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.sltp-value.sl{color:var(--red-l)}
+.sltp-value.tp{color:var(--green-l)}
+.sltp-value.entry{color:var(--gold-l)}
+
+/* SMC CONCEPT BADGES */
+.smc-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.smc-badge{
+  font-size:10.5px;font-weight:500;padding:4px 10px;border-radius:7px;
+  background:var(--bg-elevated);border:1px solid var(--border);color:var(--text2);
+  display:flex;align-items:center;gap:5px;
+}
+.smc-badge.smc-active{color:var(--gold-l);border-color:rgba(232,185,77,0.3)}
+.smc-badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+.premium-discount-bar{
+  margin-top:12px;height:6px;border-radius:3px;
+  background:linear-gradient(90deg, var(--green-l) 0%, var(--text3) 50%, var(--red-l) 100%);
+  position:relative;
+}
+.premium-discount-marker{
+  position:absolute;top:-3px;width:2px;height:12px;background:#fff;
+  border-radius:1px;transform:translateX(-50%);
+}
+.premium-discount-label{
+  display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px;
+}
+
+.gold-disclaimer{
+  font-size:11px;color:var(--text3);line-height:1.6;margin-top:14px;
+  padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);
+}
+
+@media (max-width:600px){
+  .tf-structure-row{grid-template-columns:1fr}
+  .sltp-row{grid-template-columns:1fr}
+}
+
 /* GEOPOLITICS — MAIN COLUMN, PREMIUM CARDS */
 .geo-loading{
   text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
@@ -621,6 +738,7 @@ body{
   .news-left{gap:8px}
 }
 </style>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
 
@@ -741,6 +859,66 @@ body{
   <div class="warn-banner" id="warn-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
+  </div>
+
+  <div class="gold-chart-section">
+    <div class="gold-chart-header">
+      <div class="gold-chart-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9h3a2 2 0 010 4H9m3 0h2M9 9v6"/></svg>
+        <span class="gold-chart-title-text">Gold · XAUUSD</span>
+        <span class="gold-price-display" id="gold-price-display">Lädt...</span>
+      </div>
+      <div class="tf-switcher">
+        <button class="tf-btn active" data-tf="1h">1H</button>
+        <button class="tf-btn" data-tf="4h">4H</button>
+        <button class="tf-btn" data-tf="1d">1D</button>
+      </div>
+    </div>
+
+    <div id="gold-chart-container">
+      <div class="gold-chart-loading">Lade Chart-Daten...</div>
+    </div>
+
+    <div class="signal-panel signal-neutral" id="signal-panel">
+      <div class="signal-top-row">
+        <div class="signal-badge signal-neutral" id="signal-badge">Signal wird berechnet...</div>
+        <span class="signal-confidence conf-niedrig" id="signal-confidence">—</span>
+      </div>
+      <div class="signal-reasons" id="signal-reasons"></div>
+
+      <div class="sltp-row" id="sltp-row" style="display:none">
+        <div class="sltp-card">
+          <div class="sltp-label">Einstieg</div>
+          <div class="sltp-value entry" id="sltp-entry">—</div>
+        </div>
+        <div class="sltp-card">
+          <div class="sltp-label">Stop Loss</div>
+          <div class="sltp-value sl" id="sltp-sl">—</div>
+        </div>
+        <div class="sltp-card">
+          <div class="sltp-label">Take Profit (1:2)</div>
+          <div class="sltp-value tp" id="sltp-tp">—</div>
+        </div>
+      </div>
+
+      <div class="smc-badges" id="smc-badges"></div>
+
+      <div id="premium-discount-block" style="display:none">
+        <div class="premium-discount-bar">
+          <div class="premium-discount-marker" id="premium-discount-marker" style="left:50%"></div>
+        </div>
+        <div class="premium-discount-label">
+          <span>Discount</span>
+          <span id="premium-discount-text">Equilibrium</span>
+          <span>Premium</span>
+        </div>
+      </div>
+
+      <div class="tf-structure-row" id="tf-structure-row"></div>
+      <div class="gold-disclaimer">
+        Keine Anlageberatung. Automatisch berechnetes Signal basierend auf Smart-Money-Konzepten (Marktstruktur, Order Blocks, Fair Value Gaps, Liquidity Sweeps, Premium/Discount) — zu Bildungszwecken. Eigene Analyse und Risikomanagement bleiben erforderlich.
+      </div>
+    </div>
   </div>
 
   <div class="section-label">
@@ -1035,6 +1213,262 @@ async function fetchFearAndGreed(){
 
 fetchFearAndGreed();
 setInterval(fetchFearAndGreed, 5 * 60 * 1000);
+
+// ============ GOLD CHART (Lightweight Charts) ============
+let goldChart = null;
+let goldCandleSeries = null;
+let currentTimeframe = '1h';
+
+function initGoldChart(){
+  const container = document.getElementById('gold-chart-container');
+  if(!container || typeof LightweightCharts === 'undefined') return;
+
+  container.innerHTML = '';
+
+  goldChart = LightweightCharts.createChart(container, {
+    width: container.clientWidth,
+    height: 340,
+    layout: {
+      background: { color: 'transparent' },
+      textColor: '#8a8a85',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: 11,
+    },
+    grid: {
+      vertLines: { color: 'rgba(255,255,255,0.04)' },
+      horzLines: { color: 'rgba(255,255,255,0.04)' },
+    },
+    rightPriceScale: {
+      borderColor: 'rgba(255,255,255,0.08)',
+    },
+    timeScale: {
+      borderColor: 'rgba(255,255,255,0.08)',
+      timeVisible: true,
+      secondsVisible: false,
+    },
+    crosshair: {
+      vertLine: { color: 'rgba(232,185,77,0.3)' },
+      horzLine: { color: 'rgba(232,185,77,0.3)' },
+    },
+  });
+
+  goldCandleSeries = goldChart.addCandlestickSeries({
+    upColor: '#4ade80',
+    downColor: '#ef5350',
+    borderUpColor: '#4ade80',
+    borderDownColor: '#ef5350',
+    wickUpColor: '#4ade80',
+    wickDownColor: '#ef5350',
+  });
+
+  window.addEventListener('resize', () => {
+    if(goldChart) goldChart.applyOptions({ width: container.clientWidth });
+  });
+}
+
+async function loadGoldCandles(timeframe){
+  const container = document.getElementById('gold-chart-container');
+  try {
+    const res = await fetch(`${BACKEND_URL}/gold/candles/${timeframe}`);
+    if(!res.ok) throw new Error('Gold candles request failed: ' + res.status);
+    const data = await res.json();
+
+    if(!goldChart) initGoldChart();
+
+    const formatted = (data.candles || []).map(c => ({
+      time: c.time,
+      open: c.open,
+      high: c.high,
+      low: c.low,
+      close: c.close,
+    }));
+
+    goldCandleSeries.setData(formatted);
+    goldChart.timeScale().fitContent();
+
+    const last = formatted[formatted.length - 1];
+    const priceDisplay = document.getElementById('gold-price-display');
+    if(priceDisplay && last){
+      priceDisplay.innerHTML = `<span class="mono">${last.close.toFixed(2)}</span> USD`;
+    }
+  } catch(err) {
+    console.warn('Gold-Kerzendaten Anfrage fehlgeschlagen:', err);
+    if(container) container.innerHTML = '<div class="gold-chart-loading">Chart-Daten nicht verfügbar — Backend prüfen.</div>';
+  }
+}
+
+document.querySelectorAll('.tf-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTimeframe = btn.dataset.tf;
+    loadGoldCandles(currentTimeframe);
+  });
+});
+
+// ============ GOLD SIGNAL ENGINE ============
+function structureClassDe(structure){
+  const map = { Bullish: 'struct-bullish', Bearish: 'struct-bearish', Range: 'struct-range' };
+  return map[structure] || 'struct-range';
+}
+
+function structureLabelDe(structure){
+  const map = { Bullish: 'Bullisch', Bearish: 'Bearisch', Range: 'Range' };
+  return map[structure] || structure;
+}
+
+let lastSignalData = null;
+
+async function fetchGoldSignal(){
+  const panel = document.getElementById('signal-panel');
+  const badge = document.getElementById('signal-badge');
+  const confidenceEl = document.getElementById('signal-confidence');
+  const reasonsEl = document.getElementById('signal-reasons');
+  const tfRow = document.getElementById('tf-structure-row');
+  const sltpRow = document.getElementById('sltp-row');
+  const smcBadges = document.getElementById('smc-badges');
+  const pdBlock = document.getElementById('premium-discount-block');
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/gold/signal`);
+    if(!res.ok) throw new Error('Signal request failed: ' + res.status);
+    const data = await res.json();
+    lastSignalData = data;
+
+    const signalClass = data.signal === 'Long' ? 'signal-long' : data.signal === 'Short' ? 'signal-short' : 'signal-neutral';
+    const confClass = 'conf-' + (data.confidence || 'niedrig').toLowerCase();
+
+    panel.className = 'signal-panel ' + signalClass;
+    badge.className = 'signal-badge ' + signalClass;
+    badge.innerHTML = data.signal === 'Long'
+      ? '↑ LONG Signal'
+      : data.signal === 'Short'
+      ? '↓ SHORT Signal'
+      : '— Kein klares Signal';
+
+    confidenceEl.className = 'signal-confidence ' + confClass;
+    confidenceEl.textContent = 'Confidence: ' + (data.confidence || 'Niedrig') + ` (${data.bullScore ?? 0} vs ${data.bearScore ?? 0})`;
+
+    reasonsEl.innerHTML = (data.reasons || []).map(r => `<div class="signal-reason">${r}</div>`).join('');
+
+    // SL/TP anzeigen wenn Signal aktiv
+    if((data.signal === 'Long' || data.signal === 'Short') && data.stopLoss && data.takeProfit){
+      sltpRow.style.display = 'grid';
+      document.getElementById('sltp-entry').textContent = data.lastPrice?.toFixed(2) ?? '—';
+      document.getElementById('sltp-sl').textContent = data.stopLoss.toFixed(2);
+      document.getElementById('sltp-tp').textContent = data.takeProfit.toFixed(2);
+    } else {
+      sltpRow.style.display = 'none';
+    }
+
+    // SMC Konzept-Badges
+    const badges = [];
+    if(data.liquiditySweep){
+      badges.push({ label: data.liquiditySweep.type === 'bullish_sweep' ? 'Bullish Sweep erkannt' : 'Bearish Sweep erkannt', active: true });
+    }
+    const obCount = (data.orderBlocks?.bullish?.length || 0) + (data.orderBlocks?.bearish?.length || 0);
+    badges.push({ label: `${obCount} Order Block${obCount === 1 ? '' : 's'}`, active: obCount > 0 });
+    const fvgCount = data.fvgs?.length || 0;
+    badges.push({ label: `${fvgCount} offene FVG${fvgCount === 1 ? '' : 's'}`, active: fvgCount > 0 });
+    if(data.equalLevels?.equalHighs) badges.push({ label: 'Equal Highs', active: true });
+    if(data.equalLevels?.equalLows) badges.push({ label: 'Equal Lows', active: true });
+
+    smcBadges.innerHTML = badges.map(b => `
+      <span class="smc-badge ${b.active ? 'smc-active' : ''}">
+        <span class="smc-badge-dot"></span>${b.label}
+      </span>
+    `).join('');
+
+    // Premium/Discount Bar
+    if(data.premiumDiscount){
+      pdBlock.style.display = 'block';
+      const pos = Math.max(0, Math.min(100, data.premiumDiscount.position));
+      document.getElementById('premium-discount-marker').style.left = pos + '%';
+      document.getElementById('premium-discount-text').textContent = data.premiumDiscount.zone + ' · ' + pos + '%';
+    } else {
+      pdBlock.style.display = 'none';
+    }
+
+    const tfs = data.timeframes || {};
+    tfRow.innerHTML = ['h1', 'h4', 'd1'].map(key => {
+      const tf = tfs[key];
+      if(!tf) return '';
+      return `
+        <div class="tf-structure-card">
+          <div class="tf-structure-label">${key.toUpperCase()}</div>
+          <div class="tf-structure-value ${structureClassDe(tf.structure)}">${structureLabelDe(tf.structure)}</div>
+        </div>
+      `;
+    }).join('');
+
+    markupChartWithSMC(data);
+  } catch(err) {
+    console.warn('Gold-Signal Anfrage fehlgeschlagen:', err);
+    badge.textContent = 'Signal nicht verfügbar';
+  }
+}
+
+// Zeichnet Order Blocks und FVGs als horizontale Preiszonen auf den Chart
+let smcPriceLines = [];
+function markupChartWithSMC(data){
+  if(!goldCandleSeries) return;
+
+  smcPriceLines.forEach(line => {
+    try { goldCandleSeries.removePriceLine(line); } catch(e){}
+  });
+  smcPriceLines = [];
+
+  (data.orderBlocks?.bullish || []).forEach(ob => {
+    const line = goldCandleSeries.createPriceLine({
+      price: ob.low,
+      color: 'rgba(74,222,128,0.5)',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: 'OB+',
+    });
+    smcPriceLines.push(line);
+  });
+
+  (data.orderBlocks?.bearish || []).forEach(ob => {
+    const line = goldCandleSeries.createPriceLine({
+      price: ob.high,
+      color: 'rgba(239,83,80,0.5)',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: 'OB-',
+    });
+    smcPriceLines.push(line);
+  });
+
+  if(data.stopLoss && (data.signal === 'Long' || data.signal === 'Short')){
+    smcPriceLines.push(goldCandleSeries.createPriceLine({
+      price: data.stopLoss,
+      color: '#ef5350',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid,
+      axisLabelVisible: true,
+      title: 'SL',
+    }));
+  }
+  if(data.takeProfit && (data.signal === 'Long' || data.signal === 'Short')){
+    smcPriceLines.push(goldCandleSeries.createPriceLine({
+      price: data.takeProfit,
+      color: '#4ade80',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid,
+      axisLabelVisible: true,
+      title: 'TP',
+    }));
+  }
+}
+
+initGoldChart();
+loadGoldCandles(currentTimeframe);
+fetchGoldSignal();
+setInterval(() => loadGoldCandles(currentTimeframe), 2 * 60 * 1000);
+setInterval(fetchGoldSignal, 2 * 60 * 1000);
 
 // Live clock
 function updateClock(){
