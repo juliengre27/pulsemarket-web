@@ -692,6 +692,9 @@ body{
   background:rgba(220,38,38,0.12);color:var(--red-l);
   display:inline-flex;align-items:center;gap:4px;
 }
+.geo-item-badge.geo-badge-trump{
+  background:rgba(201,162,58,0.15);color:var(--gold-l);
+}
 .geo-item-meta{font-size:11.5px;color:var(--text3)}
 .geo-item-title{font-size:16px;font-weight:500;color:var(--text);line-height:1.4}
 .geo-item-link-row{
@@ -702,6 +705,12 @@ body{
   text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
   background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
 }
+.geo-retry-btn{
+  display:block;margin:12px auto 0;padding:7px 16px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg-elevated);
+  color:var(--gold-l);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.geo-retry-btn:hover{background:rgba(255,255,255,0.06)}
 
 /* CALENDAR BOX — SIDEBAR, COMPACT */
 .calendar-box{
@@ -1103,7 +1112,7 @@ fetchLiveCalendar();
 setInterval(fetchLiveCalendar, 60 * 1000);
 
 // ============ GEOPOLITICS FEED ============
-async function fetchGeopolitics(){
+async function fetchGeopolitics(retriesLeft = 2){
   const container = document.getElementById('geo-feed-container');
   try {
     const res = await fetch(`${BACKEND_URL}/geopolitics/today`);
@@ -1112,7 +1121,18 @@ async function fetchGeopolitics(){
     renderGeoFeed(data.items || []);
   } catch(err) {
     console.warn('Geopolitik-Feed Anfrage fehlgeschlagen:', err);
-    if(container) container.innerHTML = '<div class="geo-empty">Geopolitik-Feed nicht erreichbar.</div>';
+    if(retriesLeft > 0){
+      setTimeout(() => fetchGeopolitics(retriesLeft - 1), 3000);
+      return;
+    }
+    if(container){
+      container.innerHTML = `
+        <div class="geo-empty">
+          Geopolitik-Feed gerade nicht erreichbar.
+          <button class="geo-retry-btn" onclick="fetchGeopolitics(2)">Erneut versuchen</button>
+        </div>
+      `;
+    }
   }
 }
 
@@ -1144,14 +1164,17 @@ function renderGeoFeed(items){
     return;
   }
 
-  container.innerHTML = items.map((item, idx) => `
+  container.innerHTML = items.map((item, idx) => {
+    const isTrump = item.tag === 'Trump';
+    const badgeLabel = idx === 0 ? 'Breaking' : (isTrump ? 'Trump' : 'Markt-relevant');
+    return `
     <a class="geo-item" data-asset="${(item.assets || []).join(',')}" href="${item.link}" target="_blank" rel="noopener">
       <div class="geo-item-top">
-        <span class="geo-item-badge">
+        <span class="geo-item-badge ${isTrump ? 'geo-badge-trump' : ''}">
           <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          ${idx === 0 ? 'Breaking' : 'Markt-relevant'}
+          ${badgeLabel}
         </span>
-        <span class="geo-item-meta">${timeAgoLabel(item.pubDate)}</span>
+        <span class="geo-item-meta">${timeAgoLabel(item.pubDate)}${item.sourceName ? ' · ' + item.sourceName : ''}</span>
       </div>
       <div class="geo-item-title">${item.title}</div>
       <div class="geo-item-link-row">
@@ -1159,7 +1182,8 @@ function renderGeoFeed(items){
         Quelle ansehen
       </div>
     </a>
-  `).join('');
+  `;
+  }).join('');
 
   applyCurrentFilterTo('.geo-item', 'flex');
 }
@@ -1467,6 +1491,9 @@ async function fetchGoldObservation(){
     const badges = [];
     if(data.liquiditySweep){
       badges.push({ label: data.liquiditySweep.type === 'bullish_sweep' ? 'Bullish Sweep erkannt' : 'Bearish Sweep erkannt', active: true });
+    }
+    if(data.wyckoffClimax){
+      badges.push({ label: data.wyckoffClimax.type === 'selling_climax' ? 'Wyckoff Selling Climax' : 'Wyckoff Buying Climax', active: true });
     }
     const obCount = (data.orderBlocks?.bullish?.length || 0) + (data.orderBlocks?.bearish?.length || 0);
     badges.push({ label: `${obCount} Order Block${obCount === 1 ? '' : 's'}`, active: obCount > 0 });
