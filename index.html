@@ -691,8 +691,48 @@ body{
   padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);
 }
 
+/* FUNDAMENTALS PANEL */
+.fundamentals-panel{
+  margin-top:16px;padding:18px 20px;border-radius:14px;
+  background:var(--bg-elevated);border:1px solid var(--border);
+}
+.fundamentals-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;flex-wrap:wrap;gap:10px;
+}
+.fundamentals-title{
+  display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--text);
+}
+.fundamentals-bias{
+  font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:0.03em;
+  background:rgba(255,255,255,0.06);color:var(--text2);
+}
+.fundamentals-bias.fb-bullisch{background:rgba(74,222,128,0.15);color:var(--green-l)}
+.fundamentals-bias.fb-bearisch{background:rgba(239,83,80,0.15);color:var(--red-l)}
+
+.fundamentals-loading{font-size:12.5px;color:var(--text3);padding:8px 0}
+.fundamentals-list{display:flex;flex-direction:column;gap:10px}
+.fundamental-item{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  padding:12px 14px;border-radius:10px;background:var(--bg-card);
+  border-left:3px solid var(--text3);
+}
+.fundamental-item.fi-bullish{border-left-color:var(--green-l)}
+.fundamental-item.fi-bearish{border-left-color:var(--red-l)}
+.fundamental-item-left{min-width:0;flex:1}
+.fundamental-item-name{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px}
+.fundamental-item-explanation{font-size:11.5px;color:var(--text2);line-height:1.55}
+.fundamental-item-right{text-align:right;flex-shrink:0}
+.fundamental-item-value{font-size:14px;font-weight:600;color:var(--text);font-family:'JetBrains Mono',monospace}
+.fundamental-item-change{font-size:11px;font-weight:600;margin-top:2px}
+.fundamental-item-change.fc-up{color:var(--green-l)}
+.fundamental-item-change.fc-down{color:var(--red-l)}
+
 @media (max-width:600px){
   .tf-structure-row{grid-template-columns:1fr}
+  .fundamental-item{flex-direction:column;gap:8px}
+  .fundamental-item-right{text-align:left}
 }
 
 /* GEOPOLITICS — MAIN COLUMN, PREMIUM CARDS */
@@ -903,13 +943,6 @@ body{
   <div id="feed-wrapper">
   <div class="dashboard-grid">
   <div class="main-column">
-  <div class="filters">
-    <button class="pill active" data-filter="all">Alle</button>
-    <button class="pill" data-filter="gold">Gold</button>
-    <button class="pill" data-filter="nas">NAS100</button>
-    <button class="pill" data-filter="btc">BTC</button>
-  </div>
-
   <div class="warn-banner" id="warn-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
@@ -970,6 +1003,22 @@ body{
         <div class="tf-structure-row" id="tf-structure-row"></div>
         <div class="gold-disclaimer">
           Keine Anlageberatung und kein Trading-Signal. Diese Beobachtung fasst automatisch erkannte Marktstruktur-Muster (Trendrichtung, Order Blocks, Fair Value Gaps, Liquidity Sweeps, Premium/Discount) rein zu Bildungs- und Informationszwecken zusammen. Sie stellt keine Kauf- oder Verkaufsempfehlung dar.
+        </div>
+      </div>
+
+      <div class="fundamentals-panel" id="fundamentals-panel">
+        <div class="fundamentals-header">
+          <div class="fundamentals-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e8b94d" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg>
+            Fundamentale Faktoren
+          </div>
+          <span class="fundamentals-bias" id="fundamentals-bias">Lädt...</span>
+        </div>
+        <div class="fundamentals-list" id="fundamentals-list">
+          <div class="fundamentals-loading">Lade DXY und US10Y Daten...</div>
+        </div>
+        <div class="gold-disclaimer">
+          Beschreibt historisch beobachtete Korrelationen (Dollar-Stärke, Realrenditen) zu Bildungszwecken. Keine Anlageberatung.
         </div>
       </div>
       </div>
@@ -1511,6 +1560,7 @@ if(goldToggleBtn && goldBody){
       goldSectionEverOpened = true;
       loadGoldCandles(currentTimeframe);
       fetchGoldObservation();
+      fetchGoldFundamentals();
     }
   });
 }
@@ -1607,6 +1657,53 @@ async function fetchGoldObservation(){
   }
 }
 
+// ============ FUNDAMENTALE FAKTOREN — DXY & US10Y ============
+function biasClassDe(bias){
+  const map = { Bullisch: 'fb-bullisch', Bearisch: 'fb-bearisch' };
+  return map[bias] || '';
+}
+
+async function fetchGoldFundamentals(){
+  const biasEl = document.getElementById('fundamentals-bias');
+  const listEl = document.getElementById('fundamentals-list');
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/gold/fundamentals`);
+    if(!res.ok) throw new Error('Fundamentals request failed: ' + res.status);
+    const data = await res.json();
+
+    biasEl.className = 'fundamentals-bias ' + biasClassDe(data.fundamentalBias);
+    biasEl.textContent = data.fundamentalBias || 'Neutral';
+
+    if(!data.factors || data.factors.length === 0){
+      listEl.innerHTML = '<div class="fundamentals-loading">Keine fundamentalen Daten verfügbar.</div>';
+      return;
+    }
+
+    listEl.innerHTML = data.factors.map(f => {
+      const itemClass = f.implication === 'bullish' ? 'fi-bullish' : f.implication === 'bearish' ? 'fi-bearish' : '';
+      const changeClass = f.changePercent > 0 ? 'fc-up' : f.changePercent < 0 ? 'fc-down' : '';
+      const changeSign = f.changePercent > 0 ? '+' : '';
+      return `
+        <div class="fundamental-item ${itemClass}">
+          <div class="fundamental-item-left">
+            <div class="fundamental-item-name">${f.name}</div>
+            <div class="fundamental-item-explanation">${f.explanation}</div>
+          </div>
+          <div class="fundamental-item-right">
+            <div class="fundamental-item-value">${f.value}</div>
+            <div class="fundamental-item-change ${changeClass}">${changeSign}${f.changePercent.toFixed(2)}%</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(err) {
+    console.warn('Fundamentale Daten Anfrage fehlgeschlagen:', err);
+    biasEl.textContent = 'Nicht verfügbar';
+    listEl.innerHTML = '<div class="fundamentals-loading">Fundamentale Daten gerade nicht erreichbar.</div>';
+  }
+}
+
 // Zeichnet Order Blocks und FVGs als markierte Preiszonen auf den Chart —
 // keine SL/TP Linien mehr, rein informative Strukturmarkierungen.
 let smcPriceLines = [];
@@ -1659,6 +1756,7 @@ setInterval(() => {
   if(goldSectionEverOpened){
     loadGoldCandles(currentTimeframe);
     fetchGoldObservation();
+    fetchGoldFundamentals();
   }
 }, 2 * 60 * 1000);
 
@@ -1690,28 +1788,13 @@ updateCountdown();
 setInterval(updateCountdown, 30000);
 
 
-// ============ ASSET FILTER PILLS ============
-function getCurrentFilter(){
-  return document.querySelector('.pill.active')?.dataset.filter || 'all';
-}
-
+// Filter-Pills wurden entfernt — Seite ist jetzt komplett auf Gold fokussiert.
+// applyCurrentFilterTo bleibt als no-op bestehen, da renderGeoFeed sie noch aufruft.
 function applyCurrentFilterTo(selector, displayValue){
-  const filter = getCurrentFilter();
   document.querySelectorAll(selector).forEach(card => {
-    const assets = card.dataset.asset || '';
-    card.style.display = (filter === 'all' || assets.includes(filter)) ? displayValue : 'none';
+    card.style.display = displayValue;
   });
 }
-
-document.querySelectorAll('.pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    applyCurrentFilterTo('.news-card', 'block');
-    applyCurrentFilterTo('.live-event-card', 'flex');
-    applyCurrentFilterTo('.geo-item', 'flex');
-  });
-});
 
 // ============ REGELBASIERTE MARKT-ERKLÄRUNG ============
 // Kein API-Key nötig — Logik basiert auf den Live-Daten der News-Karten.
