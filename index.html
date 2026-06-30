@@ -288,6 +288,33 @@ body{
 }
 .header-cal-empty{font-size:12.5px;color:var(--text3)}
 
+.header-geo-label{
+  font-size:11px;font-weight:600;color:var(--gold-l);
+  text-transform:uppercase;letter-spacing:0.06em;
+  margin:16px 0 12px;padding-top:16px;
+  border-top:1px solid rgba(255,255,255,0.07);
+}
+.header-geo-list{display:flex;flex-direction:column;gap:10px}
+.header-geo-item{
+  display:block;text-decoration:none;color:inherit;
+  padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.header-geo-item:last-child{padding-bottom:0;border-bottom:none}
+.header-geo-item:hover .header-geo-item-title{color:var(--gold-l)}
+.header-geo-item-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.header-geo-badge{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;
+  padding:2px 6px;border-radius:4px;
+  background:rgba(220,38,38,0.15);color:var(--red-l);
+}
+.header-geo-badge.geo-badge-trump{background:rgba(201,162,58,0.18);color:var(--gold-l)}
+.header-geo-item-time{font-size:10.5px;color:var(--text3)}
+.header-geo-item-title{
+  font-size:12.5px;color:var(--text2);line-height:1.4;
+  transition:color .15s;
+}
+.header-geo-loading,.header-geo-empty{font-size:12px;color:var(--text3)}
+
 @media (max-width:760px){
   .hero-split{grid-template-columns:1fr}
   .hero-split-right{order:-1}
@@ -801,6 +828,11 @@ body{
           <div class="hero-split-right">
             <div class="header-calendar-label">Heute im Kalender</div>
             <div id="header-cal-list" class="header-calendar-list"></div>
+
+            <div class="header-geo-label">Geopolitik · Live</div>
+            <div id="header-geo-list" class="header-geo-list">
+              <div class="header-geo-loading">Lädt...</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1119,6 +1151,7 @@ async function fetchGeopolitics(retriesLeft = 2){
     if(!res.ok) throw new Error('Geopolitics request failed: ' + res.status);
     const data = await res.json();
     renderGeoFeed(data.items || []);
+    renderHeaderGeoFeed(data.items || []);
   } catch(err) {
     console.warn('Geopolitik-Feed Anfrage fehlgeschlagen:', err);
     if(retriesLeft > 0){
@@ -1133,7 +1166,33 @@ async function fetchGeopolitics(retriesLeft = 2){
         </div>
       `;
     }
+    const headerList = document.getElementById('header-geo-list');
+    if(headerList) headerList.innerHTML = '<div class="header-geo-empty">Nicht erreichbar</div>';
   }
+}
+
+function renderHeaderGeoFeed(items){
+  const list = document.getElementById('header-geo-list');
+  if(!list) return;
+
+  if(items.length === 0){
+    list.innerHTML = '<div class="header-geo-empty">Keine aktuellen Meldungen</div>';
+    return;
+  }
+
+  list.innerHTML = items.slice(0, 4).map((item, idx) => {
+    const isTrump = item.tag === 'Trump';
+    const badgeLabel = idx === 0 ? 'Breaking' : (isTrump ? 'Trump' : 'Markt');
+    return `
+      <a class="header-geo-item" href="${item.link}" target="_blank" rel="noopener">
+        <div class="header-geo-item-top">
+          <span class="header-geo-badge ${isTrump ? 'geo-badge-trump' : ''}">${badgeLabel}</span>
+          <span class="header-geo-item-time">${timeAgoLabel(item.pubDate)}</span>
+        </div>
+        <div class="header-geo-item-title">${item.title}</div>
+      </a>
+    `;
+  }).join('');
 }
 
 function formatGeoDate(pubDate){
@@ -1166,7 +1225,7 @@ function renderGeoFeed(items){
 
   container.innerHTML = items.map((item, idx) => {
     const isTrump = item.tag === 'Trump';
-    const badgeLabel = idx === 0 ? 'Breaking' : (isTrump ? 'Trump' : 'Markt-relevant');
+    const badgeLabel = idx === 0 ? 'Breaking' : (isTrump ? 'Trump · Truth Social' : 'Markt-relevant');
     return `
     <a class="geo-item" data-asset="${(item.assets || []).join(',')}" href="${item.link}" target="_blank" rel="noopener">
       <div class="geo-item-top">
