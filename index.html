@@ -738,7 +738,7 @@ body{
   .news-left{gap:8px}
 }
 </style>
-<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
 
@@ -1131,7 +1131,7 @@ function renderGeoFeed(items){
   }
 
   container.innerHTML = items.map((item, idx) => `
-    <a class="geo-item" href="${item.link}" target="_blank" rel="noopener">
+    <a class="geo-item" data-asset="${(item.assets || []).join(',')}" href="${item.link}" target="_blank" rel="noopener">
       <div class="geo-item-top">
         <span class="geo-item-badge">
           <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
@@ -1146,6 +1146,8 @@ function renderGeoFeed(items){
       </div>
     </a>
   `).join('');
+
+  applyCurrentFilterTo('.geo-item', 'flex');
 }
 
 fetchGeopolitics();
@@ -1221,7 +1223,13 @@ let currentTimeframe = '1h';
 
 function initGoldChart(){
   const container = document.getElementById('gold-chart-container');
-  if(!container || typeof LightweightCharts === 'undefined') return;
+  if(!container) return;
+
+  if(typeof LightweightCharts === 'undefined'){
+    container.innerHTML = '<div class="gold-chart-loading">Chart-Bibliothek konnte nicht geladen werden.</div>';
+    console.error('LightweightCharts ist nicht definiert — Script-Tag prüfen.');
+    return;
+  }
 
   container.innerHTML = '';
 
@@ -1252,14 +1260,30 @@ function initGoldChart(){
     },
   });
 
-  goldCandleSeries = goldChart.addCandlestickSeries({
+  const candleOptions = {
     upColor: '#4ade80',
     downColor: '#ef5350',
     borderUpColor: '#4ade80',
     borderDownColor: '#ef5350',
     wickUpColor: '#4ade80',
     wickDownColor: '#ef5350',
-  });
+  };
+
+  // Kompatibilität: v4 nutzt chart.addCandlestickSeries(),
+  // v5 nutzt chart.addSeries(CandlestickSeries, options).
+  try {
+    if(typeof goldChart.addCandlestickSeries === 'function'){
+      goldCandleSeries = goldChart.addCandlestickSeries(candleOptions);
+    } else if(typeof goldChart.addSeries === 'function' && LightweightCharts.CandlestickSeries){
+      goldCandleSeries = goldChart.addSeries(LightweightCharts.CandlestickSeries, candleOptions);
+    } else {
+      throw new Error('Weder addCandlestickSeries noch addSeries(CandlestickSeries) verfügbar');
+    }
+  } catch(err) {
+    console.error('Konnte Candlestick-Serie nicht erstellen:', err);
+    container.innerHTML = '<div class="gold-chart-loading">Chart konnte nicht initialisiert werden — Bibliotheksversion prüfen.</div>';
+    return;
+  }
 
   window.addEventListener('resize', () => {
     if(goldChart) goldChart.applyOptions({ width: container.clientWidth });
@@ -1499,19 +1523,25 @@ setInterval(updateCountdown, 30000);
 
 
 // ============ ASSET FILTER PILLS ============
+function getCurrentFilter(){
+  return document.querySelector('.pill.active')?.dataset.filter || 'all';
+}
+
+function applyCurrentFilterTo(selector, displayValue){
+  const filter = getCurrentFilter();
+  document.querySelectorAll(selector).forEach(card => {
+    const assets = card.dataset.asset || '';
+    card.style.display = (filter === 'all' || assets.includes(filter)) ? displayValue : 'none';
+  });
+}
+
 document.querySelectorAll('.pill').forEach(pill => {
   pill.addEventListener('click', () => {
     document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
-    const filter = pill.dataset.filter;
-    document.querySelectorAll('.news-card').forEach(card => {
-      const assets = card.dataset.asset || '';
-      card.style.display = (filter === 'all' || assets.includes(filter)) ? 'block' : 'none';
-    });
-    document.querySelectorAll('.live-event-card').forEach(card => {
-      const assets = card.dataset.asset || '';
-      card.style.display = (filter === 'all' || assets.includes(filter)) ? 'flex' : 'none';
-    });
+    applyCurrentFilterTo('.news-card', 'block');
+    applyCurrentFilterTo('.live-event-card', 'flex');
+    applyCurrentFilterTo('.geo-item', 'flex');
   });
 });
 
