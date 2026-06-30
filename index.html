@@ -377,6 +377,8 @@ body{
   height:1px;
   background:var(--border);
 }
+.section-label-trump{color:var(--gold-l)}
+.section-label-trump::after{background:rgba(232,185,77,0.18)}
 
 /* NEWS CARD */
 .news-card{
@@ -698,39 +700,37 @@ body{
   text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
 }
 .geo-item{
-  display:flex;flex-direction:column;gap:10px;
+  display:flex;flex-direction:column;gap:9px;
   background:var(--bg-card);border:1px solid var(--border);
-  border-radius:16px;padding:20px 22px;margin-bottom:12px;
+  border-radius:14px;padding:18px 20px;margin-bottom:10px;
   text-decoration:none;color:inherit;
-  transition:border-color .15s, transform .15s;
+  transition:border-color .15s, background .15s;
   position:relative;
   overflow:hidden;
 }
 .geo-item::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg, var(--red-l), var(--gold));
-  opacity:0.7;
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--gold-l);
+  opacity:0.55;
 }
-.geo-item:hover{border-color:rgba(232,163,28,0.35);transform:translateX(2px)}
+.geo-item:hover{border-color:rgba(232,185,77,0.3);background:rgba(255,255,255,0.015)}
 .geo-item-top{display:flex;align-items:center;gap:8px;justify-content:space-between}
 .geo-item-badge{
-  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;
   padding:3px 9px;border-radius:6px;
-  background:rgba(220,38,38,0.12);color:var(--red-l);
+  background:rgba(201,162,58,0.13);color:var(--gold-l);
   display:inline-flex;align-items:center;gap:4px;
 }
-.geo-item-badge.geo-badge-trump{
-  background:rgba(201,162,58,0.15);color:var(--gold-l);
-}
-.geo-item-meta{font-size:11.5px;color:var(--text3)}
-.geo-item-title{font-size:16px;font-weight:500;color:var(--text);line-height:1.4}
+.geo-item-meta{font-size:11px;color:var(--text3);font-weight:500}
+.geo-item-title{font-size:15px;font-weight:500;color:var(--text);line-height:1.45}
 .geo-item-link-row{
-  display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gold-l);
-  margin-top:2px;
+  display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text3);
+  margin-top:2px;transition:color .15s;
 }
+.geo-item:hover .geo-item-link-row{color:var(--gold-l)}
 .geo-empty{
   text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;
-  background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
 }
 .geo-retry-btn{
   display:block;margin:12px auto 0;padding:7px 16px;border-radius:8px;
@@ -976,17 +976,17 @@ body{
     </div>
   </div>
 
-  <div class="section-label">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
-    Geopolitik · Markt-relevant · Live
+  <div class="section-label section-label-trump">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Donald Trump · Truth Social · Live
   </div>
 
   <div id="geo-feed-container">
-    <div class="geo-loading">Lade geopolitische News...</div>
+    <div class="geo-loading">Lade Truth-Social-Posts...</div>
   </div>
 
   <div class="footer-note">
-    Live via FinancialJuice · aktualisiert alle 3 Minuten · nur markt-relevante Meldungen
+    Live via Truth Social Archiv · aktualisiert jede Minute · nur markt-relevante Posts
   </div>
   </div>
 
@@ -1145,29 +1145,43 @@ setInterval(fetchLiveCalendar, 60 * 1000);
 
 // ============ GEOPOLITICS FEED ============
 async function fetchGeopolitics(retriesLeft = 2){
-  const container = document.getElementById('geo-feed-container');
   try {
     const res = await fetch(`${BACKEND_URL}/geopolitics/today`);
     if(!res.ok) throw new Error('Geopolitics request failed: ' + res.status);
     const data = await res.json();
-    renderGeoFeed(data.items || []);
     renderHeaderGeoFeed(data.items || []);
   } catch(err) {
-    console.warn('Geopolitik-Feed Anfrage fehlgeschlagen:', err);
+    console.warn('Geopolitik-Feed (Header) Anfrage fehlgeschlagen:', err);
     if(retriesLeft > 0){
       setTimeout(() => fetchGeopolitics(retriesLeft - 1), 3000);
+      return;
+    }
+    const headerList = document.getElementById('header-geo-list');
+    if(headerList) headerList.innerHTML = '<div class="header-geo-empty">Nicht erreichbar</div>';
+  }
+}
+
+async function fetchTrumpFeed(retriesLeft = 2){
+  const container = document.getElementById('geo-feed-container');
+  try {
+    const res = await fetch(`${BACKEND_URL}/trump/today`);
+    if(!res.ok) throw new Error('Trump feed request failed: ' + res.status);
+    const data = await res.json();
+    renderGeoFeed(data.items || []);
+  } catch(err) {
+    console.warn('Trump-Feed Anfrage fehlgeschlagen:', err);
+    if(retriesLeft > 0){
+      setTimeout(() => fetchTrumpFeed(retriesLeft - 1), 3000);
       return;
     }
     if(container){
       container.innerHTML = `
         <div class="geo-empty">
-          Geopolitik-Feed gerade nicht erreichbar.
-          <button class="geo-retry-btn" onclick="fetchGeopolitics(2)">Erneut versuchen</button>
+          Truth-Social-Feed gerade nicht erreichbar.
+          <button class="geo-retry-btn" onclick="fetchTrumpFeed(2)">Erneut versuchen</button>
         </div>
       `;
     }
-    const headerList = document.getElementById('header-geo-list');
-    if(headerList) headerList.innerHTML = '<div class="header-geo-empty">Nicht erreichbar</div>';
   }
 }
 
@@ -1219,36 +1233,34 @@ function renderGeoFeed(items){
   if(!container) return;
 
   if(items.length === 0){
-    container.innerHTML = '<div class="geo-empty">Keine markt-relevanten geopolitischen Meldungen gerade.</div>';
+    container.innerHTML = '<div class="geo-empty">Aktuell keine markt-relevanten Truth-Social-Posts.</div>';
     return;
   }
 
-  container.innerHTML = items.map((item, idx) => {
-    const isTrump = item.tag === 'Trump';
-    const badgeLabel = idx === 0 ? 'Breaking' : (isTrump ? 'Trump · Truth Social' : 'Markt-relevant');
-    return `
+  container.innerHTML = items.map((item, idx) => `
     <a class="geo-item" data-asset="${(item.assets || []).join(',')}" href="${item.link}" target="_blank" rel="noopener">
       <div class="geo-item-top">
-        <span class="geo-item-badge ${isTrump ? 'geo-badge-trump' : ''}">
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-          ${badgeLabel}
+        <span class="geo-item-badge geo-badge-trump">
+          ${idx === 0 ? 'Neuester Post' : 'Truth Social'}
         </span>
-        <span class="geo-item-meta">${timeAgoLabel(item.pubDate)}${item.sourceName ? ' · ' + item.sourceName : ''}</span>
+        <span class="geo-item-meta">${timeAgoLabel(item.pubDate)}</span>
       </div>
       <div class="geo-item-title">${item.title}</div>
       <div class="geo-item-link-row">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-        Quelle ansehen
+        Original-Post ansehen
       </div>
     </a>
-  `;
-  }).join('');
+  `).join('');
 
   applyCurrentFilterTo('.geo-item', 'flex');
 }
 
 fetchGeopolitics();
 setInterval(fetchGeopolitics, 60 * 1000);
+
+fetchTrumpFeed();
+setInterval(fetchTrumpFeed, 60 * 1000);
 
 // ============ FEAR & GREED SENTIMENT ============
 function fngColorClass(label){
