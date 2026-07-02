@@ -538,19 +538,15 @@ body{
   text-align:center;
 }
 
-/* DASHBOARD GRID — two columns for wider layout */
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:1fr 320px;
-  gap:24px;
-  align-items:start;
-}
-.main-column{min-width:0}
-.side-column{min-width:0;position:sticky;top:24px}
 
-@media (max-width:920px){
-  .dashboard-grid{grid-template-columns:1fr}
-  .side-column{position:static}
+/* GEO FULL GRID — Trump/Geopolitik-Posts als sauberes Karten-Grid über volle Breite */
+.geo-full-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));
+  gap:14px;
+}
+@media (max-width:760px){
+  .geo-full-grid{grid-template-columns:1fr}
 }
 
 /* AI ASK BOX */
@@ -625,7 +621,7 @@ body{
 .geo-item{
   display:flex;flex-direction:column;gap:9px;
   background:var(--bg-card);border:1px solid var(--border);
-  border-radius:14px;padding:18px 20px;margin-bottom:10px;
+  border-radius:14px;padding:18px 20px;
   text-decoration:none;color:inherit;
   transition:border-color .15s, background .15s;
   position:relative;
@@ -756,14 +752,6 @@ body{
   .stat-card-hero:last-child{border-bottom:none}
   .stat-card-value{font-size:24px}
   .stat-card-icon{width:26px;height:26px}
-
-  /* Dashboard Grid — Hauptspalte + Sidebar */
-  .dashboard-grid{
-    grid-template-columns:1fr;gap:18px;
-  }
-  .side-column{
-    position:static;
-  }
 
   /* Geopolitik / Trump Karten */
   .geo-item{padding:14px 16px}
@@ -900,8 +888,6 @@ body{
   <div id="api-status" style="font-size:11px;color:var(--text3);margin-bottom:16px;text-align:right">Verbinde mit Finnhub...</div>
 
   <div id="feed-wrapper">
-  <div class="dashboard-grid">
-  <div class="main-column">
   <div class="warn-banner" id="warn-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
@@ -912,34 +898,16 @@ body{
     Donald Trump · Truth Social · Live
   </div>
 
-  <div id="geo-feed-container">
+  <div id="geo-feed-container" class="geo-full-grid">
     <div class="geo-loading">Lade Truth-Social-Posts...</div>
   </div>
 
   <div class="footer-note">
     Live via Truth Social Archiv · aktualisiert jede Minute · nur markt-relevante Posts
   </div>
-  </div>
 
-  <div class="side-column">
-    <div class="ai-ask-box">
-      <div class="ai-ask-label">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Warum bewegt sich der Markt?
-      </div>
-      <div class="ai-quick-questions" id="ai-quick-questions">
-        <button class="ai-quick-q" data-asset="gold">Warum bewegt sich Gold?</button>
-        <button class="ai-quick-q" data-asset="nas">Warum bewegt sich NAS100?</button>
-        <button class="ai-quick-q" data-asset="btc">Warum bewegt sich Bitcoin?</button>
-        <button class="ai-quick-q" data-asset="caution">Heute besonders vorsichtig?</button>
-      </div>
-      <div class="ai-answer-box" id="ai-answer-box"></div>
-    </div>
+  <div id="live-events-container" style="display:none"></div>
 
-    <div id="live-events-container" style="display:none"></div>
-  </div>
-
-  </div>
   </div>
 
 </div>
