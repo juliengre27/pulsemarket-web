@@ -1003,9 +1003,7 @@ function renderLiveEvents(events){
   }).join('');
 
   document.querySelectorAll('.live-event-card').forEach(card => {
-    const activeFilter = document.querySelector('.pill.active')?.dataset.filter || 'all';
-    const assets = card.dataset.asset || '';
-    card.style.display = (activeFilter === 'all' || assets.includes(activeFilter)) ? 'flex' : 'none';
+    card.style.display = 'flex';
   });
 
   updateHeaderCalendar(events);
@@ -1118,21 +1116,25 @@ function updateHeaderCalendar(events){
     return;
   }
 
-  const usHighImpact = events.filter(ev => ev.impact === 'High' && ev.country === 'USD');
+  // Zeige High-Impact USD zuerst, dann Medium, dann alles — nie leer lassen
+  let display = events.filter(ev => ev.impact === 'High' && ev.country === 'USD');
+  if(display.length === 0) display = events.filter(ev => ev.country === 'USD');
+  if(display.length === 0) display = events.filter(ev => ev.impact === 'High');
+  if(display.length === 0) display = events;
 
-  if(usHighImpact.length === 0){
-    listEl.innerHTML = '<span class="header-cal-empty">Keine roten USA-News heute</span>';
+  if(display.length === 0){
+    listEl.innerHTML = '<span class="header-cal-empty">Keine Events heute</span>';
     return;
   }
 
-  listEl.innerHTML = usHighImpact.slice(0, 6).map(ev => `
+  listEl.innerHTML = display.slice(0, 6).map(ev => `
     <div class="header-cal-item">
-      <span class="header-cal-item-dot impact-high-dot"></span>
+      <span class="header-cal-item-dot ${ev.impact === 'High' ? 'impact-high-dot' : 'impact-medium-dot'}"></span>
       <div class="header-cal-item-body">
-        <span class="header-cal-item-time mono">${ev.time} Uhr</span>
+        <span class="header-cal-item-time mono">${ev.time} Uhr · ${ev.country}</span>
         <div class="header-cal-item-title">${ev.title}</div>
         ${renderNumbers(ev)}
-        ${renderPrediction(ev.prediction, ev.id)}
+        ${ev.prediction ? renderPrediction(ev.prediction, ev.id) : ''}
       </div>
     </div>
   `).join('');
