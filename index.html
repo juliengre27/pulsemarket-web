@@ -286,6 +286,43 @@ body{
   font-size:13px;color:var(--text);font-weight:500;line-height:1.4;
   margin-top:2px;
 }
+
+/* Prediction Toggle */
+.cal-prediction-toggle{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:5px;font-size:10px;font-weight:600;
+  color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;
+  cursor:pointer;background:none;border:none;padding:0;font-family:'Inter',sans-serif;
+  transition:color .15s;
+}
+.cal-prediction-toggle:hover{color:var(--gold-l)}
+.cal-prediction-box{
+  display:none;margin-top:8px;padding:10px 12px;border-radius:9px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+}
+.cal-prediction-box.open{display:block}
+.cal-pred-row{
+  display:grid;grid-template-columns:90px 1fr;gap:6px;
+  font-size:11px;line-height:1.5;margin-bottom:7px;
+}
+.cal-pred-row:last-child{margin-bottom:0}
+.cal-pred-scenario{
+  font-weight:600;padding:2px 7px;border-radius:5px;font-size:10px;
+  display:inline-flex;align-items:center;gap:3px;align-self:start;
+}
+.cal-pred-scenario.sc-higher{background:rgba(74,222,128,0.12);color:var(--green-l)}
+.cal-pred-scenario.sc-lower{background:rgba(239,83,80,0.12);color:var(--red-l)}
+.cal-pred-assets{display:flex;flex-direction:column;gap:3px}
+.cal-pred-asset{
+  display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);
+}
+.cal-pred-asset-name{color:var(--text3);min-width:32px;font-size:10px}
+.cal-pred-dir{font-weight:600;font-size:10.5px}
+.cal-pred-dir.dir-bull{color:var(--green-l)}
+.cal-pred-dir.dir-bear{color:var(--red-l)}
+.cal-pred-dir.dir-neu{color:var(--text3)}
+.cal-pred-text{font-size:11px;color:var(--text2);line-height:1.5}
+.cal-pred-reason{font-size:10.5px;color:var(--text3);margin-top:3px;line-height:1.4}
 .header-cal-empty{font-size:12.5px;color:var(--text3)}
 
 .header-geo-label{
@@ -991,6 +1028,63 @@ function renderLiveEvents(events){
 }
 
 // ============ HEADER CALENDAR WIDGET ============
+function predDirClass(dir){ return dir === 'bullish' ? 'dir-bull' : dir === 'bearish' ? 'dir-bear' : 'dir-neu'; }
+function predDirLabel(dir){ return dir === 'bullish' ? '↑ Bullisch' : dir === 'bearish' ? '↓ Bearisch' : '— Neutral'; }
+
+function renderPrediction(pred, id){
+  if(!pred) return '';
+
+  // Fed-Speaker: nur Freitext
+  if(pred.text){
+    return `
+      <button class="cal-prediction-toggle" onclick="togglePred('${id}')">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Was bedeutet das?
+      </button>
+      <div class="cal-prediction-box" id="pred-${id}">
+        <div class="cal-pred-text">${pred.text}</div>
+      </div>
+    `;
+  }
+
+  const buildRow = (scenario, data, scClass) => `
+    <div class="cal-pred-row">
+      <span class="cal-pred-scenario ${scClass}">${scenario}</span>
+      <div class="cal-pred-assets">
+        <div class="cal-pred-asset">
+          <span class="cal-pred-asset-name">Gold</span>
+          <span class="cal-pred-dir ${predDirClass(data.gold)}">${predDirLabel(data.gold)}</span>
+        </div>
+        <div class="cal-pred-asset">
+          <span class="cal-pred-asset-name">NAS</span>
+          <span class="cal-pred-dir ${predDirClass(data.nas)}">${predDirLabel(data.nas)}</span>
+        </div>
+        <div class="cal-pred-asset">
+          <span class="cal-pred-asset-name">BTC</span>
+          <span class="cal-pred-dir ${predDirClass(data.btc)}">${predDirLabel(data.btc)}</span>
+        </div>
+        <div class="cal-pred-reason">${data.reason}</div>
+      </div>
+    </div>
+  `;
+
+  return `
+    <button class="cal-prediction-toggle" onclick="togglePred('${id}')">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Was bedeutet das?
+    </button>
+    <div class="cal-prediction-box" id="pred-${id}">
+      ${buildRow('↑ Höher als erwartet', pred.higher, 'sc-higher')}
+      ${buildRow('↓ Niedriger als erwartet', pred.lower, 'sc-lower')}
+    </div>
+  `;
+}
+
+function togglePred(id){
+  const box = document.getElementById('pred-' + id);
+  if(box) box.classList.toggle('open');
+}
+
 function updateHeaderCalendar(events){
   const listEl = document.getElementById('header-cal-list');
   if(!listEl) return;
@@ -1013,6 +1107,7 @@ function updateHeaderCalendar(events){
       <div class="header-cal-item-body">
         <span class="header-cal-item-time mono">${ev.time} Uhr</span>
         <div class="header-cal-item-title">${ev.title}</div>
+        ${renderPrediction(ev.prediction, ev.id)}
       </div>
     </div>
   `).join('');
