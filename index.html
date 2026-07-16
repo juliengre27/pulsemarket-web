@@ -883,6 +883,40 @@ body{
   .events-grid{grid-template-columns:1fr;gap:10px}
   .ev-macro-dual{grid-template-columns:1fr}
 }
+
+/* ============ BIAS-KARTE · aufklappbare Makro-Analyse ============ */
+.bias-expand-btn{
+  display:flex;align-items:center;gap:5px;width:100%;
+  margin-top:11px;padding:8px 10px;border-radius:8px;
+  background:rgba(201,162,58,0.06);border:1px solid rgba(201,162,58,0.14);
+  color:var(--gold-l);font-size:11px;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;letter-spacing:0.02em;
+  transition:background .15s, border-color .15s;
+}
+.bias-expand-btn:hover{background:rgba(201,162,58,0.12);border-color:rgba(201,162,58,0.3)}
+.bias-expand-btn svg{transition:transform .25s}
+.bias-explain{
+  display:none;margin-top:10px;
+  animation:biasReveal .3s ease;
+}
+.bias-explain.open{display:block}
+@keyframes biasReveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.me-list{display:flex;flex-direction:column;gap:8px;margin-bottom:11px}
+.me-item{
+  font-size:11.5px;line-height:1.55;color:var(--text2);
+  padding:9px 11px;border-radius:8px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.05);
+  border-left:2px solid rgba(201,162,58,0.35);
+}
+.me-item b{color:var(--text);font-weight:600}
+.me-fazit{
+  display:block;font-size:11.5px;line-height:1.55;font-weight:500;
+  padding:10px 12px;border-radius:8px;
+}
+.me-fazit.me-bull{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);color:var(--green-l)}
+.me-fazit.me-bear{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.2);color:var(--red-l)}
+.me-fazit.me-neu{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text2)}
 </style>
 </head>
 <body>
@@ -1594,6 +1628,66 @@ const BIAS_DISPLAY = [
 function biasClassFor(b){return b==='LONG'?'b-long':b==='SHORT'?'b-short':'b-neutral'}
 function biasArrowFor(b){return b==='LONG'?'\u25b2':b==='SHORT'?'\u25bc':'\u00b7'}
 function biasWordFor(b){return b==='LONG'?'Long':b==='SHORT'?'Short':'Neutral'}
+
+// ============ LANGFRIST-ANALYSE pro Markt aus FRED-Faktoren ============
+// Baut aus den geladenen Makro-Faktoren (Realzins, US10Y, VIX, DXY, Sentiment)
+// einen erklärenden Klartext: WARUM steigt/fällt der Markt strukturell.
+function buildMacroExplainer(inst){
+  const F = {};
+  (inst.factors||[]).forEach(f => { F[f.name] = f; });
+  const bits = [];
+
+  // Hilfsfunktion: Faktor sicher lesen
+  const g = (needle) => Object.values(F).find(f => f.name.toLowerCase().includes(needle));
+
+  const real = g('realzins');
+  const us10 = g('10y');
+  const vix = g('vix');
+  const dxy = g('dxy') || g('eurusd-momentum');
+  const sent = g('fear & greed') || g('sentiment') || g('risk');
+  const fund = g('funding');
+  const trend = g('200-tage');
+  const crypto = g('crypto');
+
+  if(real && real.ok){
+    if(real.points > 0) bits.push(`<b>Realzinsen fallen</b> (${real.value}). Reale US-Renditen sind der stärkste Langfrist-Treiber für Gold: Sinken sie, wird zinsloses Gold attraktiver — struktureller Rückenwind.`);
+    else if(real.points < 0) bits.push(`<b>Realzinsen steigen</b> (${real.value}). Höhere reale Renditen erhöhen die Opportunitätskosten von Gold — langfristiger Gegenwind.`);
+    else bits.push(`Realzinsen seitwärts (${real.value}) — kein klarer Langfrist-Impuls von der wichtigsten Gold-Determinante.`);
+  }
+  if(us10 && us10.ok){
+    if(us10.points > 0) bits.push(`<b>US-10J-Renditen geben nach</b> (${us10.value}). Fallende Renditen entlasten Tech-Bewertungen (NAS100) und schwächen den Dollar tendenziell.`);
+    else if(us10.points < 0) bits.push(`<b>US-10J-Renditen steigen</b> (${us10.value}). Höhere Renditen drücken auf Growth/Tech und stützen den Dollar.`);
+  }
+  if(dxy && dxy.ok){
+    if(dxy.points > 0) bits.push(`<b>Dollar schwächelt</b> (${dxy.value}). Ein schwacher Dollar ist Rückenwind für Gold und Risk-Assets.`);
+    else if(dxy.points < 0) bits.push(`<b>Dollar stark</b> (${dxy.value}). Dollarstärke bremst Gold und dämpft Risikofreude.`);
+  }
+  if(vix && vix.ok){
+    if(vix.points > 0) bits.push(`<b>VIX erhöht</b> (${vix.value}). Steigende Nervosität treibt Safe-Haven-Nachfrage (Gold) und mahnt bei Index-Longs zur Vorsicht.`);
+    else if(vix.points < 0) bits.push(`<b>VIX sehr niedrig</b> (${vix.value}). Ruhiges Umfeld ist trendfreundlich für Aktien/Index, aber wenig Safe-Haven-Bedarf.`);
+    else bits.push(`VIX im Normalbereich (${vix.value}) — kein Stress-Signal.`);
+  }
+  if(sent && sent.ok){ bits.push(`Sentiment (${sent.value}): ${sent.note}.`); }
+  if(trend && trend.ok){
+    bits.push(trend.points>0 ? `<b>Über dem 200-Tage-Schnitt</b> (${trend.value}) — übergeordnet intakter Aufwärtstrend.` : `<b>Unter dem 200-Tage-Schnitt</b> (${trend.value}) — übergeordneter Abwärtstrend, Rallys bleiben verdächtig.`);
+  }
+  if(crypto && crypto.ok){ bits.push(`Crypto-Sentiment (${crypto.value}): ${crypto.note}.`); }
+  if(fund && fund.ok){ bits.push(`Funding (${fund.value}): ${fund.note}.`); }
+
+  // Fazit
+  let fazit = '';
+  if(inst.bias === 'LONG') fazit = `<span class="me-fazit me-bull">Fazit: Die Makro-Faktoren neigen strukturell zur Long-Seite. Das ist der übergeordnete Kontext — die Tagesstruktur im Chart bestimmt das Timing.</span>`;
+  else if(inst.bias === 'SHORT') fazit = `<span class="me-fazit me-bear">Fazit: Die Makro-Faktoren neigen strukturell zur Short-Seite. Rücksetzer nach oben sind im Zweifel Verkaufsgelegenheiten, nicht Trendwenden.</span>`;
+  else fazit = `<span class="me-fazit me-neu">Fazit: Die Treiber heben sich gegenseitig auf — kein klarer Langfrist-Bias. An solchen Tagen entscheidet reine Chart-Struktur, nicht Makro.</span>`;
+
+  return `<div class="me-list">${bits.map(b=>`<div class="me-item">${b}</div>`).join('')}</div>${fazit}`;
+}
+
+function toggleBias(key){
+  const box = document.getElementById('biasx-'+key);
+  if(box) box.classList.toggle('open');
+}
+
 function renderBiasBar(instruments){
   const bar=document.getElementById('bias-bar');
   if(!bar)return;
@@ -1604,13 +1698,19 @@ function renderBiasBar(instruments){
     const conf=inst.confidence>=0.75?'':inst.confidence>=0.5?'low':'bad';
     const pips=(inst.factors||[]).map(f=>{const p=f.points>0?'up':f.points<0?'down':'';return '<span class="bias-factor-pip '+p+'"></span>'}).join('');
     const scoreStr=(inst.score>=0?'+':'')+inst.score;
+    const explainer = buildMacroExplainer(inst);
     return '<div class="bias-card '+cls+'">'
       +'<div class="bias-card-top"><span class="bias-instr">'+d.label+'</span>'
       +'<span class="bias-conf-dot '+conf+'" title="Datenqualitaet '+Math.round(inst.confidence*100)+'%"></span></div>'
       +'<div class="bias-verdict"><span class="bias-arrow">'+biasArrowFor(inst.bias)+'</span>'
       +'<span class="bias-word">'+biasWordFor(inst.bias)+'</span><span class="bias-score">'+scoreStr+'</span></div>'
       +'<div class="bias-factors">'+pips+'</div>'
-      +'<div class="bias-comment">'+(inst.comment||'')+'</div></div>';
+      +'<div class="bias-comment">'+(inst.comment||'')+'</div>'
+      +'<button class="bias-expand-btn" onclick="toggleBias(\''+d.key+'\')">'
+      +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>'
+      +'Warum? Makro-Analyse</button>'
+      +'<div class="bias-explain" id="biasx-'+d.key+'">'+explainer+'</div>'
+      +'</div>';
   }).join('');
 }
 async function fetchDailyBias(){
@@ -1884,13 +1984,14 @@ document.querySelectorAll('.ai-quick-q').forEach(btn => {
   let scrollY = 0;
 
   function updateScrollTransform(){
-    const progress = Math.min(1, scrollY / 500);
-
-    if(heroOuter){
-      heroOuter.style.transform = `translate3d(0px, ${scrollY * 0.18}px, 0px) scale(${1 - progress * 0.04})`;
-      heroOuter.style.opacity = String(Math.max(0.25, 1 - progress * 0.75));
+    // Nur die inneren Hero-Elemente sanft bewegen — der Hero-Container selbst
+    // bleibt voll sichtbar und überlappt NICHTS. Kein Abdunkeln mehr.
+    const content = document.getElementById('hero-content-inner');
+    if(content){
+      const shift = Math.min(scrollY * 0.12, 40);
+      content.style.transform = `translate3d(0px, ${shift}px, 0px)`;
+      content.style.opacity = String(Math.max(0.6, 1 - scrollY / 900));
     }
-
     ticking = false;
   }
 
