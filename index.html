@@ -803,12 +803,86 @@ body{
 .bias-factor-pip{width:100%;flex:1;height:3px;border-radius:2px;background:var(--text3);min-width:8px;opacity:0.4}
 .bias-factor-pip.up{background:var(--green-l);opacity:0.9}
 .bias-factor-pip.down{background:var(--red-l);opacity:0.9}
-.bias-bar-label{font-size:11.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.bias-bar-label{font-size:11.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin:4px 0 12px;display:flex;align-items:center;gap:8px}
 .bias-bar-label::after{content:'';flex:1;height:1px;background:var(--border)}
 .bias-bar-label .bias-updated{font-size:10px;font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0}
 .bias-loading{grid-column:1/-1;text-align:center;padding:24px;color:var(--text3);font-size:12.5px}
 @media (max-width:760px){.bias-bar{grid-template-columns:repeat(2, 1fr);gap:10px}}
 @media (max-width:400px){.bias-word{font-size:17px}.bias-arrow{font-size:22px}.bias-card{padding:13px 13px 12px}}
+
+/* ============ EVENT-GRID — Kalender-Events nebeneinander ============ */
+.events-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+  gap:14px;
+  margin-bottom:8px;
+}
+.events-empty{
+  grid-column:1/-1;text-align:center;padding:30px;
+  color:var(--text3);font-size:13px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
+}
+.event-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+  position:relative;overflow:hidden;
+  transition:border-color .15s;
+}
+.event-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--text3);
+}
+.event-card.ev-high::before{background:var(--red-l)}
+.event-card.ev-med::before{background:var(--gold-l)}
+.event-card.ev-dir-bull::before{background:var(--green-l)}
+.event-card.ev-dir-bear::before{background:var(--red-l)}
+.event-card:hover{border-color:rgba(201,162,58,0.28)}
+.event-card-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
+}
+.event-card-time{font-size:13px;font-weight:600;color:var(--gold-l)}
+.event-card-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:2px}
+.event-card-country{font-size:11px;color:var(--text3);margin-bottom:10px}
+.event-card .cal-numbers{margin:0 0 10px}
+.event-card-analysis{
+  font-size:12px;line-height:1.55;color:var(--text2);
+  background:rgba(255,255,255,0.02);border-radius:8px;padding:9px 11px;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.event-card-analysis b{color:var(--text);font-weight:600}
+.an-beat{color:var(--green-l);font-weight:600}
+.an-miss{color:var(--red-l);font-weight:600}
+.ev-toggle{
+  display:flex;align-items:center;gap:5px;width:100%;
+  margin-top:10px;padding:8px 10px;border-radius:8px;
+  background:rgba(201,162,58,0.07);border:1px solid rgba(201,162,58,0.15);
+  color:var(--gold-l);font-size:11.5px;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:background .15s;
+}
+.ev-toggle:hover{background:rgba(201,162,58,0.13)}
+.ev-toggle svg{transition:transform .2s}
+.ev-macro{display:none;margin-top:10px;padding:11px 12px;border-radius:9px;
+  background:var(--bg-elevated);border:1px solid var(--border)}
+.ev-macro.open{display:block}
+.ev-macro-scenario-label{font-size:10.5px;font-weight:600;color:var(--gold-l);
+  text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.ev-asset-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ev-chip{font-size:11px;font-weight:500;padding:4px 9px;border-radius:6px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07)}
+.ev-chip.dir-bull{color:var(--green-l)}
+.ev-chip.dir-bear{color:var(--red-l)}
+.ev-chip.dir-neu{color:var(--text2)}
+.ev-macro-reason{font-size:11.5px;color:var(--text2);line-height:1.55}
+.ev-macro-note{font-size:11.5px;color:var(--text2);line-height:1.6}
+.ev-macro-dual{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ev-macro-col-head{font-size:10.5px;font-weight:600;display:block;margin-bottom:6px}
+.ev-macro-col-head.sc-higher{color:var(--green-l)}
+.ev-macro-col-head.sc-lower{color:var(--red-l)}
+.header-cal-more{font-size:11px;color:var(--gold-l);font-weight:500;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)}
+@media (max-width:640px){
+  .events-grid{grid-template-columns:1fr;gap:10px}
+  .ev-macro-dual{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -935,6 +1009,14 @@ body{
   <div class="warn-banner" id="warn-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
     <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
+  </div>
+
+  <div class="section-label" id="events-section-label">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Heute im Kalender · Zahlen & Marktwirkung
+  </div>
+  <div id="events-grid" class="events-grid">
+    <div class="events-empty">Lade Events...</div>
   </div>
 
   <div class="section-label section-label-trump">
@@ -1171,17 +1253,150 @@ function updateHeaderCalendar(events){
     return;
   }
 
-  listEl.innerHTML = display.slice(0, 6).map(ev => `
+  const total = display.length;
+  listEl.innerHTML = display.slice(0, 3).map(ev => `
     <div class="header-cal-item">
       <span class="header-cal-item-dot ${ev.impact === 'High' ? 'impact-high-dot' : 'impact-medium-dot'}"></span>
       <div class="header-cal-item-body">
         <span class="header-cal-item-time mono">${ev.time} Uhr · ${ev.country}</span>
         <div class="header-cal-item-title">${ev.title}</div>
-        ${renderNumbers(ev)}
-        ${ev.prediction ? renderPrediction(ev.prediction, ev.id) : ''}
       </div>
     </div>
-  `).join('');
+  `).join('') + (total > 3 ? `<div class="header-cal-more">+${total - 3} weitere unten im Detail ↓</div>` : '');
+
+  // Das volle Event-Grid im Hauptbereich rendern
+  renderEventsGrid(events);
+}
+
+
+// ============ ZAHLEN-ANALYSE — konkrete Auswertung Fed/US-Daten ============
+function analyzeNumbers(ev){
+  const a = ev.actual != null ? parseFloat(String(ev.actual).replace(/[^0-9.-]/g,'')) : null;
+  const f = ev.forecast != null ? parseFloat(String(ev.forecast).replace(/[^0-9.-]/g,'')) : null;
+  const p = ev.previous != null ? parseFloat(String(ev.previous).replace(/[^0-9.-]/g,'')) : null;
+  const lowerIsBetter = ['unemployment','jobless','claims','inflation','cpi','ppi','pce'].some(k => ev.title.toLowerCase().includes(k));
+
+  // Noch nicht veröffentlicht
+  if(a == null || isNaN(a)){
+    if(f != null && p != null && !isNaN(f) && !isNaN(p)){
+      const dir = f > p ? 'höher' : f < p ? 'niedriger' : 'gleich';
+      return { state:'pending', text:`Steht noch aus. Prognose <b>${ev.forecast}</b> liegt ${dir} als der Vorwert <b>${ev.previous}</b>. Erst die tatsächliche Zahl um ${ev.time} Uhr zeigt die Überraschung — die Abweichung von der Prognose bewegt den Markt, nicht die Zahl selbst.` };
+    }
+    return { state:'pending', text:`Steht noch aus (${ev.time} Uhr). Entscheidend wird, wie stark <b>Actual</b> von der Prognose <b>${ev.forecast||'—'}</b> abweicht.` };
+  }
+
+  // Veröffentlicht — Abweichung berechnen
+  let surprise = '', dir = 'neutral';
+  if(f != null && !isNaN(f)){
+    const diff = a - f;
+    const beat = lowerIsBetter ? a < f : a > f;
+    const miss = lowerIsBetter ? a > f : a < f;
+    dir = beat ? 'bullish' : miss ? 'bearish' : 'neutral';
+    const diffStr = (diff>=0?'+':'')+diff.toFixed(Math.abs(diff)<1?2:1);
+    if(Math.abs(diff) < 1e-9){
+      surprise = `<b>${ev.actual}</b> — <b>exakt wie erwartet</b>. Kaum Überraschung, geringe Marktreaktion zu erwarten.`;
+    } else {
+      surprise = `<b>${ev.actual}</b> vs. Prognose ${ev.forecast} (${diffStr}). ${beat?'<span class="an-beat">Besser als erwartet.</span>':'<span class="an-miss">Schlechter als erwartet.</span>'}`;
+    }
+  } else {
+    surprise = `<b>${ev.actual}</b> veröffentlicht.`;
+  }
+
+  // Trend ggü. Vorwert
+  let trend = '';
+  if(p != null && !isNaN(p)){
+    const td = a - p;
+    if(Math.abs(td) > 1e-9) trend = ` Gegenüber dem Vorwert (${ev.previous}) ${td>0?'gestiegen':'gefallen'}.`;
+  }
+
+  return { state:'done', dir, text: surprise + trend };
+}
+
+// Makro-Wirkung pro Asset als klare Zeile
+function assetImpactLine(ev){
+  const pred = ev.prediction;
+  if(!pred) return '';
+  const an = analyzeNumbers(ev);
+  // Bei Speaker-Events (nur text): den Text zeigen
+  if(pred.text){
+    return `<div class="ev-macro-note">${pred.text}</div>`;
+  }
+  // Szenario wählen: wenn Actual da ist → passendes Szenario, sonst beide kurz
+  const a = ev.actual != null ? parseFloat(String(ev.actual).replace(/[^0-9.-]/g,'')) : null;
+  const f = ev.forecast != null ? parseFloat(String(ev.forecast).replace(/[^0-9.-]/g,'')) : null;
+  let scenario = null, scLabel = '';
+  if(a != null && f != null && !isNaN(a) && !isNaN(f)){
+    scenario = a >= f ? pred.higher : pred.lower;
+    scLabel = a >= f ? 'Da höher als erwartet' : 'Da niedriger als erwartet';
+  }
+  const chips = (data) => `
+    <div class="ev-asset-chips">
+      <span class="ev-chip ${predDirClass(data.gold)}">Gold ${predDirLabel(data.gold)}</span>
+      <span class="ev-chip ${predDirClass(data.nas)}">NAS ${predDirLabel(data.nas)}</span>
+      <span class="ev-chip ${predDirClass(data.btc)}">BTC ${predDirLabel(data.btc)}</span>
+    </div>`;
+  if(scenario){
+    return `<div class="ev-macro-scenario-label">${scLabel}:</div>${chips(scenario)}<div class="ev-macro-reason">${scenario.reason}</div>`;
+  }
+  // Noch nicht veröffentlicht → beide Szenarien kompakt
+  return `
+    <div class="ev-macro-dual">
+      <div class="ev-macro-col">
+        <span class="ev-macro-col-head sc-higher">↑ Höher</span>
+        ${chips(pred.higher)}
+      </div>
+      <div class="ev-macro-col">
+        <span class="ev-macro-col-head sc-lower">↓ Niedriger</span>
+        ${chips(pred.lower)}
+      </div>
+    </div>`;
+}
+
+// ============ EVENT-GRID — Karten nebeneinander im Hauptbereich ============
+function renderEventsGrid(events){
+  const grid = document.getElementById('events-grid');
+  if(!grid) return;
+  if(!events || events.length === 0){
+    grid.innerHTML = '<div class="events-empty">Keine Events heute im Kalender.</div>';
+    return;
+  }
+  // Sortierung: High zuerst, dann Medium, dann Rest — USD priorisiert
+  const rank = ev => (ev.impact==='High'?0:ev.impact==='Medium'?1:2) + (ev.country==='USD'?0:0.5);
+  const sorted = [...events].sort((x,y)=>rank(x)-rank(y));
+  // Nur High + Medium zeigen (Low wäre Rauschen bei 24 Events)
+  const show = sorted.filter(ev => ev.impact==='High' || ev.impact==='Medium');
+  const list = show.length > 0 ? show : sorted.slice(0,6);
+
+  grid.innerHTML = list.map(ev => {
+    const an = analyzeNumbers(ev);
+    const dirCls = an.dir === 'bullish' ? 'ev-dir-bull' : an.dir === 'bearish' ? 'ev-dir-bear' : '';
+    const nums = renderNumbers(ev);
+    return `
+      <div class="event-card ${ev.impact==='High'?'ev-high':'ev-med'} ${dirCls}">
+        <div class="event-card-head">
+          <span class="event-card-time mono">${ev.time}</span>
+          <span class="impact-badge ${impactClass(ev.impact)}">${impactLabelDe(ev.impact)}</span>
+        </div>
+        <div class="event-card-title">${ev.title}</div>
+        <div class="event-card-country">${ev.country}</div>
+        ${nums}
+        <div class="event-card-analysis">${an.text}</div>
+        ${ev.prediction ? `
+          <button class="ev-toggle" onclick="toggleEv('${ev.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            Was heißt das für die Märkte?
+          </button>
+          <div class="ev-macro" id="ev-${ev.id}">
+            ${assetImpactLine(ev)}
+          </div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleEv(id){
+  const box = document.getElementById('ev-' + id);
+  if(box) box.classList.toggle('open');
 }
 
 fetchLiveCalendar();
