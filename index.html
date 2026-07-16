@@ -774,6 +774,41 @@ body{
   .hero-title{font-size:21px}
   .stat-card-value{font-size:21px}
 }
+
+/* ============ DAILY BIAS BAR — alle Märkte auf einen Blick ============ */
+.bias-bar{display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;margin:0 0 4px}
+.bias-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:15px 16px 14px;overflow:hidden;transition:border-color .2s, transform .2s}
+.bias-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--text3);transition:background .3s}
+.bias-card.b-long::before{background:var(--green-l)}
+.bias-card.b-short::before{background:var(--red-l)}
+.bias-card.b-neutral::before{background:var(--text3)}
+.bias-card:hover{border-color:rgba(201,162,58,0.3);transform:translateY(-2px)}
+.bias-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.bias-instr{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.02em}
+.bias-conf-dot{width:6px;height:6px;border-radius:50%;background:var(--green-l);box-shadow:0 0 6px rgba(74,222,128,0.6)}
+.bias-conf-dot.low{background:var(--amber-l);box-shadow:0 0 6px rgba(232,185,77,0.6)}
+.bias-conf-dot.bad{background:var(--red-l);box-shadow:none}
+.bias-verdict{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bias-arrow{font-size:26px;line-height:1;font-weight:700}
+.bias-card.b-long .bias-arrow{color:var(--green-l)}
+.bias-card.b-short .bias-arrow{color:var(--red-l)}
+.bias-card.b-neutral .bias-arrow{color:var(--text3)}
+.bias-word{font-size:19px;font-weight:600;letter-spacing:-0.01em}
+.bias-card.b-long .bias-word{color:var(--green-l)}
+.bias-card.b-short .bias-word{color:var(--red-l)}
+.bias-card.b-neutral .bias-word{color:var(--text2)}
+.bias-score{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text3);margin-left:auto}
+.bias-comment{font-size:11px;color:var(--text3);line-height:1.45;border-top:1px solid rgba(255,255,255,0.06);padding-top:9px;margin-top:2px}
+.bias-factors{display:flex;gap:4px;margin-top:9px;flex-wrap:wrap}
+.bias-factor-pip{width:100%;flex:1;height:3px;border-radius:2px;background:var(--text3);min-width:8px;opacity:0.4}
+.bias-factor-pip.up{background:var(--green-l);opacity:0.9}
+.bias-factor-pip.down{background:var(--red-l);opacity:0.9}
+.bias-bar-label{font-size:11.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.bias-bar-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.bias-bar-label .bias-updated{font-size:10px;font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0}
+.bias-loading{grid-column:1/-1;text-align:center;padding:24px;color:var(--text3);font-size:12.5px}
+@media (max-width:760px){.bias-bar{grid-template-columns:repeat(2, 1fr);gap:10px}}
+@media (max-width:400px){.bias-word{font-size:17px}.bias-arrow{font-size:22px}.bias-card{padding:13px 13px 12px}}
 </style>
 </head>
 <body>
@@ -883,6 +918,15 @@ body{
         <div class="stat-card-source" id="fng-btc-source"></div>
       </div>
     </div>
+  </div>
+
+  <div class="bias-bar-label">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>
+    Daily Bias · Makro-Kompass
+    <span class="bias-updated" id="bias-updated"></span>
+  </div>
+  <div class="bias-bar" id="bias-bar">
+    <div class="bias-loading">Lade Makro-Bias...</div>
   </div>
 
   <div id="api-status" style="font-size:11px;color:var(--text3);margin-bottom:16px;text-align:right">Verbinde mit Finnhub...</div>
@@ -1324,6 +1368,48 @@ async function fetchFearAndGreed(){
 
 fetchFearAndGreed();
 setInterval(fetchFearAndGreed, 5 * 60 * 1000);
+
+// ============ DAILY BIAS — Makro-Kompass alle 4 Märkte ============
+const BIAS_DISPLAY = [
+  { key:'XAUUSD', label:'Gold' },
+  { key:'NAS100', label:'NAS100' },
+  { key:'EURUSD', label:'EUR/USD' },
+  { key:'BTCUSD', label:'Bitcoin' },
+];
+function biasClassFor(b){return b==='LONG'?'b-long':b==='SHORT'?'b-short':'b-neutral'}
+function biasArrowFor(b){return b==='LONG'?'\u25b2':b==='SHORT'?'\u25bc':'\u00b7'}
+function biasWordFor(b){return b==='LONG'?'Long':b==='SHORT'?'Short':'Neutral'}
+function renderBiasBar(instruments){
+  const bar=document.getElementById('bias-bar');
+  if(!bar)return;
+  if(!instruments){bar.innerHTML='<div class="bias-loading">Makro-Bias gerade nicht erreichbar.</div>';return}
+  bar.innerHTML=BIAS_DISPLAY.map(d=>{
+    const inst=instruments[d.key];if(!inst)return '';
+    const cls=biasClassFor(inst.bias);
+    const conf=inst.confidence>=0.75?'':inst.confidence>=0.5?'low':'bad';
+    const pips=(inst.factors||[]).map(f=>{const p=f.points>0?'up':f.points<0?'down':'';return '<span class="bias-factor-pip '+p+'"></span>'}).join('');
+    const scoreStr=(inst.score>=0?'+':'')+inst.score;
+    return '<div class="bias-card '+cls+'">'
+      +'<div class="bias-card-top"><span class="bias-instr">'+d.label+'</span>'
+      +'<span class="bias-conf-dot '+conf+'" title="Datenqualitaet '+Math.round(inst.confidence*100)+'%"></span></div>'
+      +'<div class="bias-verdict"><span class="bias-arrow">'+biasArrowFor(inst.bias)+'</span>'
+      +'<span class="bias-word">'+biasWordFor(inst.bias)+'</span><span class="bias-score">'+scoreStr+'</span></div>'
+      +'<div class="bias-factors">'+pips+'</div>'
+      +'<div class="bias-comment">'+(inst.comment||'')+'</div></div>';
+  }).join('');
+}
+async function fetchDailyBias(){
+  try{
+    const res=await fetch(BACKEND_URL+'/bias/daily');
+    if(!res.ok)throw new Error('Bias request failed: '+res.status);
+    const data=await res.json();
+    renderBiasBar(data.instruments||null);
+    const upd=document.getElementById('bias-updated');
+    if(upd&&data.asOf){const t=new Date(data.asOf);upd.textContent='Stand '+t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr'}
+  }catch(err){console.warn('Daily-Bias Anfrage fehlgeschlagen:',err);renderBiasBar(null)}
+}
+fetchDailyBias();
+setInterval(fetchDailyBias, 15 * 60 * 1000);
 
 // Live clock
 function updateClock(){
