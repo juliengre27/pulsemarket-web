@@ -917,6 +917,48 @@ body{
 .me-fazit.me-bull{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);color:var(--green-l)}
 .me-fazit.me-bear{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.2);color:var(--red-l)}
 .me-fazit.me-neu{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text2)}
+
+/* ============ FED-MAKRO · TAGESREPORT (ausklappbar) ============ */
+.fed-report{
+  position:relative;z-index:2;
+  border-top:1px solid rgba(255,255,255,0.07);
+  padding:14px 28px;
+}
+.fed-report-toggle{
+  display:flex;align-items:center;gap:8px;width:100%;
+  background:none;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;color:var(--gold-l);
+  font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;
+  padding:0;text-align:left;
+}
+.fed-report-toggle svg{transition:transform .25s;flex-shrink:0}
+.fed-report.open .fed-report-toggle svg{transform:rotate(180deg)}
+.fed-report-sub{
+  font-size:11.5px;color:var(--text2);font-weight:500;
+  text-transform:none;letter-spacing:0;margin-left:auto;text-align:right;
+}
+.fed-report-body{display:none;margin-top:12px}
+.fed-report.open .fed-report-body{display:block;animation:biasReveal .3s ease}
+.fed-sec{
+  font-size:12.5px;line-height:1.6;color:var(--text2);
+  padding:11px 13px;border-radius:9px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.05);
+  border-left:2px solid rgba(201,162,58,0.35);
+  margin-bottom:8px;
+}
+.fed-sec b{color:var(--text);font-weight:600}
+.fed-sec-label{
+  display:block;font-size:10px;font-weight:600;color:var(--gold-l);
+  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;
+}
+.fed-ev-line{display:flex;gap:8px;align-items:baseline;margin-top:5px;font-size:12px}
+.fed-ev-time{color:var(--gold-l);font-weight:600;min-width:40px;flex-shrink:0}
+.fed-disclaimer{font-size:10.5px;color:var(--text3);margin-top:2px}
+@media (max-width:640px){
+  .fed-report{padding:12px 18px}
+  .fed-report-sub{display:none}
+}
 </style>
 </head>
 <body>
@@ -968,6 +1010,15 @@ body{
       </div>
     </div>
 
+    <div class="fed-report" id="fed-report">
+      <button class="fed-report-toggle" onclick="toggleFedReport()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        Fed-Makro · Tagesreport
+        <span class="fed-report-sub" id="fed-report-sub">Lädt...</span>
+      </button>
+      <div class="fed-report-body" id="fed-report-body"></div>
+    </div>
+
     <div class="stat-grid-hero">
       <div class="stat-card-hero">
         <div class="stat-card-top-row">
@@ -979,11 +1030,8 @@ body{
           </div>
         </div>
         <div class="stat-card-label">Gold · XAUUSD</div>
-        <div class="stat-card-value">Bearish</div>
-        <div class="stat-card-trend t-bear">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
-          GDP + PCE belasten
-        </div>
+        <div class="stat-card-value" id="stat-bias-gold">—</div>
+        <div class="stat-card-trend" id="stat-trend-gold">Makro-Bias lädt...</div>
         <div class="fng-label-row" id="fng-gold-label">Fear &amp; Greed lädt...</div>
         <div class="stat-card-source" id="fng-gold-source"></div>
       </div>
@@ -998,11 +1046,8 @@ body{
           </div>
         </div>
         <div class="stat-card-label">NAS100</div>
-        <div class="stat-card-value">Bullish</div>
-        <div class="stat-card-trend t-bull">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>
-          Starkes GDP stützt
-        </div>
+        <div class="stat-card-value" id="stat-bias-nas">—</div>
+        <div class="stat-card-trend" id="stat-trend-nas">Makro-Bias lädt...</div>
         <div class="fng-label-row" id="fng-nas-label">Fear &amp; Greed lädt...</div>
         <div class="stat-card-source" id="fng-nas-source"></div>
       </div>
@@ -1017,11 +1062,8 @@ body{
           </div>
         </div>
         <div class="stat-card-label">Bitcoin · BTC</div>
-        <div class="stat-card-value">Bearish</div>
-        <div class="stat-card-trend t-bear">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>
-          Risk-off Stimmung
-        </div>
+        <div class="stat-card-value" id="stat-bias-btc">—</div>
+        <div class="stat-card-trend" id="stat-trend-btc">Makro-Bias lädt...</div>
         <div class="fng-label-row" id="fng-btc-label">Fear &amp; Greed lädt...</div>
         <div class="stat-card-source" id="fng-btc-source"></div>
       </div>
@@ -1040,9 +1082,9 @@ body{
   <div id="api-status" style="font-size:11px;color:var(--text3);margin-bottom:16px;text-align:right">Verbinde mit Finnhub...</div>
 
   <div id="feed-wrapper">
-  <div class="warn-banner" id="warn-banner">
+  <div class="warn-banner" id="warn-banner" style="display:none">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-    <span>Hoher Impact in <b id="mins-away">13</b> Minuten — Fed Sprecher Rede um 16:00 Uhr. Position prüfen.</span>
+    <span id="warn-text"></span>
   </div>
 
   <div class="section-label" id="events-section-label">
@@ -1088,6 +1130,8 @@ async function fetchLiveCalendar(){
     if(statusEl) statusEl.textContent = 'Live verbunden · ' + (data.count || 0) + ' Events heute';
     console.log('Kalenderdaten vom Backend:', data);
     renderLiveEvents(data.events || []);
+    updateCountdown();
+    renderFedReport();
     return data;
   } catch(err) {
     if(statusEl) statusEl.textContent = 'Backend noch nicht verbunden — Beispieldaten werden angezeigt';
@@ -1303,6 +1347,18 @@ function updateHeaderCalendar(events){
 }
 
 
+// ============ ZEIT-HELFER — ist ein Event schon vorbei? ============
+// Gibt zurück, wie viele Minuten seit der Event-Uhrzeit (heute, lokale Zeit)
+// vergangen sind. Negativ = Event liegt noch in der Zukunft.
+function eventMinutesSince(timeStr){
+  const m = String(timeStr || '').match(/^(\d{1,2}):(\d{2})/);
+  if(!m) return null;
+  const now = new Date();
+  const evDate = new Date(now);
+  evDate.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
+  return Math.round((now - evDate) / 60000);
+}
+
 // ============ ZAHLEN-ANALYSE — konkrete Auswertung Fed/US-Daten ============
 function analyzeNumbers(ev){
   const a = ev.actual != null ? parseFloat(String(ev.actual).replace(/[^0-9.-]/g,'')) : null;
@@ -1310,11 +1366,25 @@ function analyzeNumbers(ev){
   const p = ev.previous != null ? parseFloat(String(ev.previous).replace(/[^0-9.-]/g,'')) : null;
   const lowerIsBetter = ['unemployment','jobless','claims','inflation','cpi','ppi','pce'].some(k => ev.title.toLowerCase().includes(k));
 
-  // Noch nicht veröffentlicht
+  // Noch kein Actual-Wert vorhanden
   if(a == null || isNaN(a)){
+    // Prognose vs. Vorwert korrekt formulieren (höher / niedriger / entspricht)
+    let rel = '';
     if(f != null && p != null && !isNaN(f) && !isNaN(p)){
-      const dir = f > p ? 'höher' : f < p ? 'niedriger' : 'gleich';
-      return { state:'pending', text:`Steht noch aus. Prognose <b>${ev.forecast}</b> liegt ${dir} als der Vorwert <b>${ev.previous}</b>. Erst die tatsächliche Zahl um ${ev.time} Uhr zeigt die Überraschung — die Abweichung von der Prognose bewegt den Markt, nicht die Zahl selbst.` };
+      rel = f > p ? `liegt höher als der Vorwert <b>${ev.previous}</b>`
+          : f < p ? `liegt niedriger als der Vorwert <b>${ev.previous}</b>`
+          : `entspricht dem Vorwert <b>${ev.previous}</b>`;
+    }
+
+    // Ist die Event-Uhrzeit schon deutlich vorbei? Dann NICHT "steht noch aus"
+    // behaupten — die Zahl ist draußen, nur der Datenfeed hängt hinterher.
+    const since = eventMinutesSince(ev.time);
+    if(since != null && since > 30){
+      return { state:'awaiting', text:`Um ${ev.time} Uhr veröffentlicht — der Actual-Wert ist noch nicht im Datenfeed angekommen.${rel ? ` Prognose war <b>${ev.forecast}</b> (${rel}).` : ''} Sobald die Zahl eintrifft, wird sie hier automatisch ausgewertet.` };
+    }
+
+    if(rel){
+      return { state:'pending', text:`Steht noch aus. Prognose <b>${ev.forecast}</b> ${rel}. Erst die tatsächliche Zahl um ${ev.time} Uhr zeigt die Überraschung — die Abweichung von der Prognose bewegt den Markt, nicht die Zahl selbst.` };
     }
     return { state:'pending', text:`Steht noch aus (${ev.time} Uhr). Entscheidend wird, wie stark <b>Actual</b> von der Prognose <b>${ev.forecast||'—'}</b> abweicht.` };
   }
@@ -1629,6 +1699,37 @@ function biasClassFor(b){return b==='LONG'?'b-long':b==='SHORT'?'b-short':'b-neu
 function biasArrowFor(b){return b==='LONG'?'\u25b2':b==='SHORT'?'\u25bc':'\u00b7'}
 function biasWordFor(b){return b==='LONG'?'Long':b==='SHORT'?'Short':'Neutral'}
 
+// ============ HERO-STAT-KARTEN — Bias live statt hardcodiert ============
+// Vorher standen hier fest eingetippte Werte ("Bearish · GDP + PCE belasten"),
+// die nie aktualisiert wurden. Jetzt kommen sie aus /bias/daily.
+function updateStatCards(instruments){
+  const map = { gold:'XAUUSD', nas:'NAS100', btc:'BTCUSD' };
+  const upArrow = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>';
+  const downArrow = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>';
+
+  Object.entries(map).forEach(([prefix, key]) => {
+    const valEl = document.getElementById('stat-bias-' + prefix);
+    const trendEl = document.getElementById('stat-trend-' + prefix);
+    if(!valEl || !trendEl) return;
+
+    const inst = instruments && instruments[key];
+    if(!inst){
+      valEl.textContent = '—';
+      trendEl.className = 'stat-card-trend';
+      trendEl.textContent = 'Makro-Daten nicht verfügbar';
+      return;
+    }
+
+    const word = inst.bias === 'LONG' ? 'Bullish' : inst.bias === 'SHORT' ? 'Bearish' : 'Neutral';
+    valEl.textContent = word;
+
+    const cls = inst.bias === 'LONG' ? 't-bull' : inst.bias === 'SHORT' ? 't-bear' : '';
+    const arrow = inst.bias === 'LONG' ? upArrow : inst.bias === 'SHORT' ? downArrow : '';
+    trendEl.className = 'stat-card-trend ' + cls;
+    trendEl.innerHTML = arrow + (inst.comment || 'Kein klarer Makro-Impuls');
+  });
+}
+
 // ============ LANGFRIST-ANALYSE pro Markt aus FRED-Faktoren ============
 // Baut aus den geladenen Makro-Faktoren (Realzins, US10Y, VIX, DXY, Sentiment)
 // einen erklärenden Klartext: WARUM steigt/fällt der Markt strukturell.
@@ -1718,13 +1819,160 @@ async function fetchDailyBias(){
     const res=await fetch(BACKEND_URL+'/bias/daily');
     if(!res.ok)throw new Error('Bias request failed: '+res.status);
     const data=await res.json();
+    window.__lastBias = data;
     renderBiasBar(data.instruments||null);
+    updateStatCards(data.instruments||null);
+    renderFedReport();
     const upd=document.getElementById('bias-updated');
     if(upd&&data.asOf){const t=new Date(data.asOf);upd.textContent='Stand '+t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr'}
-  }catch(err){console.warn('Daily-Bias Anfrage fehlgeschlagen:',err);renderBiasBar(null)}
+  }catch(err){console.warn('Daily-Bias Anfrage fehlgeschlagen:',err);renderBiasBar(null);updateStatCards(null)}
 }
 fetchDailyBias();
 setInterval(fetchDailyBias, 15 * 60 * 1000);
+
+// ============ FED-MAKRO · TAGESREPORT ============
+// Ausklappbare Tageseinschätzung zur Fed, direkt über den Fear-&-Greed-Karten.
+// Versucht zuerst den Backend-Endpoint /fed/daily; existiert der (noch) nicht,
+// wird der Report clientseitig aus /bias/daily-Faktoren + Kalender gebaut.
+
+// Offizieller FOMC-Kalender (Statement-Tag, Entscheid 14:00 ET = 20:00 Uhr dt. Zeit)
+const FOMC_DATES = [
+  '2026-01-28','2026-03-18','2026-04-29','2026-06-17',
+  '2026-07-29','2026-09-16','2026-10-28','2026-12-09',
+  '2027-01-27'
+];
+// Meetings mit neuen Projektionen / Dot Plot: März, Juni, September, Dezember
+const FOMC_SEP_MONTHS = [2, 5, 8, 11];
+
+function nextFomc(){
+  const now = new Date();
+  for(const d of FOMC_DATES){
+    const dt = new Date(d + 'T20:00:00');
+    if(dt > now) return dt;
+  }
+  return null;
+}
+
+let fedBackendReport = null;
+
+function toggleFedReport(){
+  const box = document.getElementById('fed-report');
+  if(box) box.classList.toggle('open');
+}
+
+// Sucht einen Makro-Faktor (z.B. "realzins") über alle Instrumente hinweg
+function fedFactor(needle){
+  const inst = (window.__lastBias && window.__lastBias.instruments) || {};
+  for(const key of ['XAUUSD','NAS100','EURUSD','BTCUSD']){
+    const fs = (inst[key] && inst[key].factors) || [];
+    const hit = fs.find(f => f.name && f.name.toLowerCase().includes(needle) && f.ok);
+    if(hit) return hit;
+  }
+  return null;
+}
+
+function buildFedReportLocal(){
+  const secs = [];
+
+  // 1) Nächster FOMC-Entscheid
+  const fomc = nextFomc();
+  if(fomc){
+    const days = Math.max(0, Math.ceil((fomc - new Date()) / 86400000));
+    const dateStr = fomc.toLocaleDateString('de-DE', { weekday:'long', day:'2-digit', month:'2-digit', year:'numeric' });
+    const isSep = FOMC_SEP_MONTHS.includes(fomc.getMonth());
+    let timing;
+    if(days <= 1) timing = '<b>Heute bzw. morgen</b> — mit deutlich erhöhter Volatilität in allen USD-Märkten rechnen.';
+    else if(days <= 7) timing = `In <b>${days} Tagen</b> — die Märkte beginnen, Szenarien einzupreisen. Fed-nahe Daten (Inflation, Arbeitsmarkt) wirken in dieser Phase überproportional stark.`;
+    else timing = `In ${days} Tagen.`;
+    secs.push(`<div class="fed-sec"><span class="fed-sec-label">Nächster Fed-Entscheid</span><b>${dateStr}</b> — Zinsentscheid um 20:00 Uhr deutscher Zeit, Pressekonferenz 20:30 Uhr${isSep ? ', inklusive neuer Projektionen (Dot Plot)' : ''}. ${timing}</div>`);
+  }
+
+  // 2) Zins- & Risiko-Umfeld aus den FRED-Faktoren des Bias-Endpoints
+  const real = fedFactor('realzins');
+  const us10 = fedFactor('10y');
+  const vix = fedFactor('vix');
+  const zb = [];
+  if(real) zb.push(`Realzins ${real.value} — ${real.points > 0 ? 'fallend, das Umfeld preist eher eine lockernde Fed ein' : real.points < 0 ? 'steigend, die restriktive Wirkung der Fed-Politik nimmt zu' : 'seitwärts, kein klarer Impuls'}`);
+  if(us10) zb.push(`US-10J-Rendite ${us10.value} — ${us10.points > 0 ? 'nachgebend' : us10.points < 0 ? 'anziehend' : 'stabil'}`);
+  if(vix) zb.push(`VIX ${vix.value} — ${vix.points > 0 ? 'erhöhte Nervosität' : vix.points < 0 ? 'sehr ruhiges Umfeld' : 'Normalbereich'}`);
+  if(zb.length){
+    secs.push(`<div class="fed-sec"><span class="fed-sec-label">Zins- &amp; Risiko-Umfeld</span>${zb.join('. ')}.</div>`);
+  }
+
+  // 3) Heutige US-Daten mit Fed-Relevanz
+  const usdEvents = latestLiveEvents.filter(ev => ev.country === 'USD' && (ev.impact === 'High' || ev.impact === 'Medium'));
+  if(usdEvents.length){
+    const lines = usdEvents.slice(0, 5).map(ev => {
+      const an = analyzeNumbers(ev);
+      let status;
+      if(an.state === 'done'){
+        const verdict = an.dir === 'bullish' ? '<span class="an-beat">besser als erwartet</span>'
+                      : an.dir === 'bearish' ? '<span class="an-miss">schlechter als erwartet</span>'
+                      : 'wie erwartet';
+        status = `<b>${ev.actual}</b> — ${verdict}`;
+      } else {
+        status = 'steht aus' + (ev.forecast ? ` (Prognose ${ev.forecast})` : '');
+      }
+      return `<div class="fed-ev-line"><span class="fed-ev-time mono">${ev.time}</span><span>${ev.title}: ${status}</span></div>`;
+    }).join('');
+    secs.push(`<div class="fed-sec"><span class="fed-sec-label">Heutige US-Daten mit Fed-Relevanz</span>${lines}</div>`);
+  } else {
+    secs.push(`<div class="fed-sec"><span class="fed-sec-label">Heutige US-Daten</span>Keine High- oder Medium-Impact US-Daten im heutigen Kalender — ein ruhiger Tag aus Fed-Sicht.</div>`);
+  }
+
+  // 4) Einordnung — neutral formulierte Beobachtung
+  const score = (real ? real.points : 0) + (us10 ? us10.points : 0);
+  let fazit;
+  if(score > 0) fazit = 'Beobachtung: Das Zinsumfeld entspannt sich tendenziell — historisch ein Umfeld, das Gold und Risk-Assets eher stützt und den Dollar bremst.';
+  else if(score < 0) fazit = 'Beobachtung: Das Zinsumfeld wirkt tendenziell restriktiv — historisch Gegenwind für Gold und Growth-Werte, Rückenwind für den Dollar.';
+  else fazit = 'Beobachtung: Vom Zinsumfeld geht aktuell kein klarer Impuls aus — die Tagesbewegung dürfte stärker von den heutigen Daten als vom Fed-Kontext bestimmt werden.';
+  secs.push(`<div class="fed-sec"><span class="fed-sec-label">Einordnung</span>${fazit}</div>`);
+  secs.push(`<div class="fed-disclaimer">Keine Anlageberatung — automatisch erstellte Beobachtung aus öffentlichen Makro-Daten (FRED, Wirtschaftskalender).</div>`);
+
+  return secs.join('');
+}
+
+function updateFedSub(){
+  const sub = document.getElementById('fed-report-sub');
+  if(!sub) return;
+  const parts = [];
+  const fomc = nextFomc();
+  if(fomc){
+    const days = Math.max(0, Math.ceil((fomc - new Date()) / 86400000));
+    parts.push(days === 0 ? 'Fed-Entscheid heute' : `Fed-Entscheid in ${days} Tagen`);
+  }
+  const usdHigh = latestLiveEvents.filter(ev => ev.country === 'USD' && ev.impact === 'High').length;
+  parts.push(`${usdHigh} US-High-Impact heute`);
+  sub.textContent = parts.join(' · ');
+}
+
+function renderFedReport(){
+  const body = document.getElementById('fed-report-body');
+  if(!body) return;
+  if(fedBackendReport && fedBackendReport.html){
+    body.innerHTML = fedBackendReport.html;
+  } else {
+    body.innerHTML = buildFedReportLocal();
+  }
+  updateFedSub();
+}
+
+async function fetchFedDaily(){
+  try{
+    const res = await fetch(`${BACKEND_URL}/fed/daily`);
+    if(res.ok){
+      const data = await res.json();
+      if(data && data.html) fedBackendReport = data;
+    }
+  }catch(err){
+    // Endpoint existiert noch nicht — clientseitiger Fallback übernimmt
+  }
+  renderFedReport();
+}
+
+fetchFedDaily();
+setInterval(fetchFedDaily, 30 * 60 * 1000);
+renderFedReport();
 
 // Live clock
 function updateClock(){
@@ -1736,15 +1984,32 @@ function updateClock(){
 updateClock();
 setInterval(updateClock, 30000);
 
-// Countdown to Fed event
+// ============ WARN-BANNER — dynamisch aus dem echten Kalender ============
+// Vorher war hier ein fest eingetippter Countdown auf 16:00 Uhr ("Fed Sprecher
+// Rede"), der jeden Tag angezeigt wurde — egal ob das Event existierte.
+// Jetzt: Banner erscheint nur, wenn ein echtes High-Impact-Event aus dem
+// Live-Kalender in den nächsten 20 Minuten ansteht.
 function updateCountdown(){
-  const target = new Date();
-  target.setHours(16, 0, 0, 0);
-  const now = new Date();
-  const diffMin = Math.round((target - now) / 60000);
   const banner = document.getElementById('warn-banner');
-  if(diffMin > 0 && diffMin <= 20){
-    document.getElementById('mins-away').textContent = diffMin;
+  const textEl = document.getElementById('warn-text');
+  if(!banner || !textEl) return;
+
+  const now = new Date();
+  let next = null;
+
+  latestLiveEvents.filter(ev => ev.impact === 'High').forEach(ev => {
+    const m = String(ev.time || '').match(/^(\d{1,2}):(\d{2})/);
+    if(!m) return;
+    const evDate = new Date(now);
+    evDate.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
+    const diffMin = Math.round((evDate - now) / 60000);
+    if(diffMin > 0 && diffMin <= 20 && (!next || diffMin < next.diffMin)){
+      next = { ev, diffMin };
+    }
+  });
+
+  if(next){
+    textEl.innerHTML = `Hoher Impact in <b>${next.diffMin} Minuten</b> — ${next.ev.title} (${next.ev.country}) um ${next.ev.time} Uhr. Position prüfen.`;
     banner.style.display = 'flex';
   } else {
     banner.style.display = 'none';
