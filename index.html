@@ -1165,9 +1165,8 @@ function renderLiveEvents(events){
 
   latestLiveEvents = events;
 
-  const highImpact = events.filter(ev => ev.impact === 'High');
-  const displayEvents = highImpact.length > 0 ? highImpact : events.filter(ev => ev.impact === 'Medium');
-  const isFallback = highImpact.length === 0 && displayEvents.length > 0;
+  const displayEvents = events.filter(ev => ev.impact === 'High');
+  const isFallback = false;
 
   if(events.length === 0){
     container.innerHTML = '<div class="live-events-empty">Keine weiteren Events für heute im Kalender.</div>';
@@ -1320,14 +1319,16 @@ function updateHeaderCalendar(events){
     return;
   }
 
-  // Zeige High-Impact USD zuerst, dann Medium, dann alles — nie leer lassen
-  let display = events.filter(ev => ev.impact === 'High' && ev.country === 'USD');
-  if(display.length === 0) display = events.filter(ev => ev.country === 'USD');
-  if(display.length === 0) display = events.filter(ev => ev.impact === 'High');
-  if(display.length === 0) display = events;
+  // Nur High-Impact (3-Sterne) — USD priorisiert, dann übrige High-Events
+  const high = events.filter(ev => ev.impact === 'High');
+  const display = [
+    ...high.filter(ev => ev.country === 'USD'),
+    ...high.filter(ev => ev.country !== 'USD'),
+  ];
 
   if(display.length === 0){
-    listEl.innerHTML = '<span class="header-cal-empty">Keine Events heute</span>';
+    listEl.innerHTML = '<span class="header-cal-empty">Keine High-Impact Events heute</span>';
+    renderEventsGrid(events);
     return;
   }
 
@@ -1467,9 +1468,12 @@ function renderEventsGrid(events){
   // Sortierung: High zuerst, dann Medium, dann Rest — USD priorisiert
   const rank = ev => (ev.impact==='High'?0:ev.impact==='Medium'?1:2) + (ev.country==='USD'?0:0.5);
   const sorted = [...events].sort((x,y)=>rank(x)-rank(y));
-  // Nur High + Medium zeigen (Low wäre Rauschen bei 24 Events)
-  const show = sorted.filter(ev => ev.impact==='High' || ev.impact==='Medium');
-  const list = show.length > 0 ? show : sorted.slice(0,6);
+  // Nur High-Impact (3-Sterne) zeigen — Medium/Low wäre Rauschen
+  const list = sorted.filter(ev => ev.impact==='High');
+  if(list.length === 0){
+    grid.innerHTML = '<div class="events-empty">Keine High-Impact Events heute im Kalender — ruhiger Tag aus News-Sicht.</div>';
+    return;
+  }
 
   grid.innerHTML = list.map(ev => {
     const an = analyzeNumbers(ev);
@@ -1900,7 +1904,7 @@ function buildFedReportLocal(){
   }
 
   // 3) Heutige US-Daten mit Fed-Relevanz
-  const usdEvents = latestLiveEvents.filter(ev => ev.country === 'USD' && (ev.impact === 'High' || ev.impact === 'Medium'));
+  const usdEvents = latestLiveEvents.filter(ev => ev.country === 'USD' && ev.impact === 'High');
   if(usdEvents.length){
     const lines = usdEvents.slice(0, 5).map(ev => {
       const an = analyzeNumbers(ev);
@@ -1917,7 +1921,7 @@ function buildFedReportLocal(){
     }).join('');
     secs.push(`<div class="fed-sec"><span class="fed-sec-label">Heutige US-Daten mit Fed-Relevanz</span>${lines}</div>`);
   } else {
-    secs.push(`<div class="fed-sec"><span class="fed-sec-label">Heutige US-Daten</span>Keine High- oder Medium-Impact US-Daten im heutigen Kalender — ein ruhiger Tag aus Fed-Sicht.</div>`);
+    secs.push(`<div class="fed-sec"><span class="fed-sec-label">Heutige US-Daten</span>Keine High-Impact US-Daten im heutigen Kalender — ein ruhiger Tag aus Fed-Sicht.</div>`);
   }
 
   // 4) Einordnung — neutral formulierte Beobachtung
