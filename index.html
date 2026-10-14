@@ -804,6 +804,31 @@ body{
 .bias-factor-pip.up{background:var(--green-l);opacity:0.9}
 .bias-factor-pip.down{background:var(--red-l);opacity:0.9}
 .bias-bar-label{font-size:11.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin:4px 0 12px;display:flex;align-items:center;gap:8px}
+
+/* ===== BIAS v2 — Richtung Tag / Woche / Monat ===== */
+.v2-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 4px}
+.v2-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px;overflow:hidden}
+.v2-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--text3)}
+.v2-card.b-long::before{background:var(--green-l)}.v2-card.b-short::before{background:var(--red-l)}
+.v2-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.v2-instr{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.v2-regime{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3)}
+.v2-rows{display:grid;gap:6px}
+.v2-row{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:8px;font-size:12px}
+.v2-h{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.v2-meter{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.06)}
+.v2-meter i{position:absolute;top:0;bottom:0;border-radius:3px}
+.v2-meter i.pos{background:var(--green-l);left:50%}.v2-meter i.neg{background:var(--red-l);right:50%}
+.v2-meter::after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--text3);opacity:.6}
+.v2-val{font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right}
+.v2-val.pos{color:var(--green-l)}.v2-val.neg{color:var(--red-l)}.v2-val.flat{color:var(--text3)}
+.v2-levels{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.v2-lvl{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:3px 7px}
+.v2-why{font-size:11px;color:var(--text3);line-height:1.45;border-top:1px solid rgba(255,255,255,.06);padding-top:8px;margin-top:10px}
+.v2-health{font-size:10.5px;color:var(--text3);margin:6px 0 14px;text-align:right}
+.v2-health b{color:var(--red-l);font-weight:500}
+@media(max-width:900px){.v2-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.v2-grid{grid-template-columns:1fr}}
 .bias-bar-label::after{content:'';flex:1;height:1px;background:var(--border)}
 .bias-bar-label .bias-updated{font-size:10px;font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0}
 .bias-loading{grid-column:1/-1;text-align:center;padding:24px;color:var(--text3);font-size:12.5px}
@@ -1078,6 +1103,16 @@ body{
   <div class="bias-bar" id="bias-bar">
     <div class="bias-loading">Lade Makro-Bias...</div>
   </div>
+
+  <div class="bias-bar-label" style="margin-top:18px">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18M5 5l14 14"/></svg>
+    Richtung · Tag / Woche / Monat
+    <span class="bias-updated" id="v2-updated"></span>
+  </div>
+  <div class="v2-grid" id="v2-grid">
+    <div class="bias-loading">Lade Positionierung &amp; Makro...</div>
+  </div>
+  <div class="v2-health" id="v2-health"></div>
 
   <div id="api-status" style="font-size:11px;color:var(--text3);margin-bottom:16px;text-align:right">Verbinde mit Finnhub...</div>
 
@@ -1833,6 +1868,66 @@ async function fetchDailyBias(){
 }
 fetchDailyBias();
 setInterval(fetchDailyBias, 15 * 60 * 1000);
+
+// ============ BIAS v2 — Richtung Tag / Woche / Monat (/bias/v2) ============
+// Gold · NAS100 · BTC plus DXY als Treiber. Score -2…+2 je Horizont,
+// Levels aus Options-OI (BTC) / Gamma (NAS), Dämpfer bei COT-Extremen.
+const V2_ORDER = [
+  { key:'GOLD',   label:'Gold · XAUUSD' },
+  { key:'NAS100', label:'NAS100' },
+  { key:'BTC',    label:'Bitcoin' },
+  { key:'DXY',    label:'DXY · Treiber' },
+];
+const V2_H = { daily:'Tag', weekly:'Woche', monthly:'Monat' };
+function v2Cls(s){ return s>0.3?'b-long':s<-0.3?'b-short':'b-neutral'; }
+function v2Row(h, o){
+  const s = o?.score ?? 0, w = Math.min(50, Math.abs(s)/2*50);
+  const dir = s>0.3?'pos':s<-0.3?'neg':'flat';
+  const bar = s>=0 ? '<i class="pos" style="width:'+w+'%"></i>' : '<i class="neg" style="width:'+w+'%"></i>';
+  return '<div class="v2-row"><span class="v2-h">'+V2_H[h]+'</span><div class="v2-meter">'+bar+'</div><span class="v2-val '+dir+'">'+(s>0?'+':'')+s.toFixed(1)+'</span></div>';
+}
+function v2Why(c, isDxy){
+  const b = [];
+  const t = c?.trend, p = c?.positioning, m = c?.macro;
+  if(t && t.ret1m != null) b.push('Trend 1M '+(t.ret1m*100>=0?'+':'')+(t.ret1m*100).toFixed(1)+'%'+(t.aboveSma200===false?' · unter 200-Tage':t.aboveSma200?' · über 200-Tage':''));
+  if(p && p.percentile3y != null) b.push('COT-Perzentil '+Math.round(p.percentile3y*100)+'%'+(p.extreme?' <b>(Extrem – gedämpft)</b>':'')+(p.reportDate?' · '+p.reportDate:''));
+  if(m && m.score != null) b.push('Makro '+(m.score>=0?'+':'')+m.score.toFixed(1));
+  if(isDxy && c?.surprise) b.push('Surprise-Index '+(c.surprise.score>=0?'+':'')+c.surprise.score.toFixed(1)+' · Inflation '+c.surprise.inflationImpulse+' · Wachstum '+c.surprise.growthImpulse);
+  if(isDxy && c?.rates) b.push('2J-Yield '+(c.rates.dgs2_20d>=0?'+':'')+Math.round(c.rates.dgs2_20d*100)+'bp/20T');
+  return b.join(' · ');
+}
+function renderV2(data){
+  const grid = document.getElementById('v2-grid'); if(!grid) return;
+  if(!data){ grid.innerHTML='<div class="bias-loading">Bias v2 gerade nicht erreichbar.</div>'; return; }
+  grid.innerHTML = V2_ORDER.map(d => {
+    const isDxy = d.key==='DXY';
+    const x = isDxy ? data.dxy : data.assets?.[d.key];
+    if(!x) return '';
+    const H = x.horizons || {};
+    const cls = v2Cls(H.weekly?.score ?? 0);
+    const regime = x.regime ? x.regime.replace(/_/g,' ') : '';
+    const lv = x.levels || {};
+    const levels = Object.entries(lv).filter(([,v])=>v!=null).map(([k,v])=>'<span class="v2-lvl">'+k.replace('callWall','Call-Wall').replace('putWall','Put-Wall').replace('maxPain','Max Pain').replace('gammaFlip','Gamma-Flip')+' '+Math.round(v).toLocaleString('de-DE')+'</span>').join('');
+    const comps = isDxy ? { ...(x.components||{}), surprise:x.surprise, rates:x.rates } : (x.components||{});
+    return '<div class="v2-card '+cls+'">'
+      +'<div class="v2-head"><span class="v2-instr">'+d.label+'</span><span class="v2-regime">'+regime+'</span></div>'
+      +'<div class="v2-rows">'+['daily','weekly','monthly'].map(h=>v2Row(h,H[h])).join('')+'</div>'
+      +(levels?'<div class="v2-levels">'+levels+'</div>':'')
+      +'<div class="v2-why">'+(v2Why(comps,isDxy)||'Beobachtung – keine Anlageberatung.')+'</div>'
+      +'</div>';
+  }).join('');
+  const bad = Object.entries(data.dataHealth||{}).filter(([,v])=>v.stale).map(([k])=>k);
+  const hl = document.getElementById('v2-health');
+  if(hl) hl.innerHTML = bad.length ? 'Quellen ohne frische Daten: <b>'+bad.join(', ')+'</b>' : 'Alle Quellen aktuell · COT mit 3 Tagen Verzögerung';
+  const upd = document.getElementById('v2-updated');
+  if(upd && data.generatedAt){ const t=new Date(data.generatedAt); upd.textContent='Stand '+t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr'; }
+}
+async function fetchBiasV2(){
+  try{ const r = await fetch(BACKEND_URL+'/bias/v2'); if(!r.ok) throw new Error(r.status); renderV2(await r.json()); }
+  catch(e){ console.warn('Bias v2 fehlgeschlagen:', e); renderV2(null); }
+}
+fetchBiasV2();
+setInterval(fetchBiasV2, 15 * 60 * 1000);
 
 // ============ FED-MAKRO · TAGESREPORT ============
 // Ausklappbare Tageseinschätzung zur Fed, direkt über den Fear-&-Greed-Karten.
