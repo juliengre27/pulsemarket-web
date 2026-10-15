@@ -825,6 +825,19 @@ body{
 .v2-levels{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .v2-lvl{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:3px 7px}
 .v2-why{font-size:11px;color:var(--text3);line-height:1.45;border-top:1px solid rgba(255,255,255,.06);padding-top:8px;margin-top:10px}
+/* Szenarien (nächste ~5 Handelstage) */
+.v2-scen{margin-top:12px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px}
+.v2-scen-h{font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between;margin-bottom:8px}
+.v2-scen-h .v2-sig{font-family:'JetBrains Mono',monospace;text-transform:none;letter-spacing:0}
+.v2-sc{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:start;padding:7px 9px;border-radius:8px;margin-bottom:5px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.v2-sc.base{border-color:rgba(201,162,58,.35);background:rgba(201,162,58,.05)}
+.v2-sc-p{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text)}
+.v2-sc.up .v2-sc-p{color:var(--green-l)}.v2-sc.dn .v2-sc-p{color:var(--red-l)}.v2-sc.rg .v2-sc-p{color:var(--gold-l)}
+.v2-sc-n{font-size:11.5px;font-weight:600;color:var(--text)}
+.v2-sc-t{font-size:11px;color:var(--text2);line-height:1.45;margin-top:2px}
+.v2-sc-t b{color:var(--text);font-weight:500}
+.v2-trap{font-size:11px;line-height:1.5;color:var(--text2);margin-top:8px;padding:8px 10px;border-radius:8px;border-left:2px solid var(--red-l);background:rgba(255,80,80,.05)}
+.v2-evt{display:inline-block;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--gold-l);border:1px solid rgba(201,162,58,.3);border-radius:5px;padding:2px 6px}
 .v2-health{font-size:10.5px;color:var(--text3);margin:6px 0 14px;text-align:right}
 .v2-health b{color:var(--red-l);font-weight:500}
 @media(max-width:900px){.v2-grid{grid-template-columns:repeat(2,1fr)}}
@@ -1095,16 +1108,12 @@ body{
     </div>
   </div>
 
-  <div class="bias-bar-label">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>
-    Daily Bias · Makro-Kompass
-    <span class="bias-updated" id="bias-updated"></span>
-  </div>
-  <div class="bias-bar" id="bias-bar">
-    <div class="bias-loading">Lade Makro-Bias...</div>
-  </div>
+  <!-- Alte Tages-Bias-Reihe (/bias/daily) ausgeblendet: zwei widersprüchliche Bias-Systeme nebeneinander
+       kosten Vertrauen. Der Endpoint bleibt aktiv für den Fed-Report und die Hero-Karten. -->
+  <div class="bias-bar" id="bias-bar" style="display:none"></div>
+  <span id="bias-updated" style="display:none"></span>
 
-  <div class="bias-bar-label" style="margin-top:18px">
+  <div class="bias-bar-label" style="margin-top:4px">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18M5 5l14 14"/></svg>
     Richtung · Tag / Woche / Monat
     <span class="bias-updated" id="v2-updated"></span>
@@ -1859,12 +1868,12 @@ async function fetchDailyBias(){
     if(!res.ok)throw new Error('Bias request failed: '+res.status);
     const data=await res.json();
     window.__lastBias = data;
-    renderBiasBar(data.instruments||null);
-    updateStatCards(data.instruments||null);
+    // Alte Bias-Reihe und Hero-Karten werden nicht mehr aus /bias/daily gefüllt (siehe Bias v2);
+    // /bias/daily liefert nur noch die Faktoren für den Fed-Report.
     renderFedReport();
     const upd=document.getElementById('bias-updated');
     if(upd&&data.asOf){const t=new Date(data.asOf);upd.textContent='Stand '+t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr'}
-  }catch(err){console.warn('Daily-Bias Anfrage fehlgeschlagen:',err);renderBiasBar(null);updateStatCards(null)}
+  }catch(err){console.warn('Daily-Bias Anfrage fehlgeschlagen:',err)}
 }
 fetchDailyBias();
 setInterval(fetchDailyBias, 15 * 60 * 1000);
@@ -1886,36 +1895,107 @@ function v2Row(h, o){
   const bar = s>=0 ? '<i class="pos" style="width:'+w+'%"></i>' : '<i class="neg" style="width:'+w+'%"></i>';
   return '<div class="v2-row"><span class="v2-h">'+V2_H[h]+'</span><div class="v2-meter">'+bar+'</div><span class="v2-val '+dir+'">'+(s>0?'+':'')+s.toFixed(1)+'</span></div>';
 }
-function v2Why(c, isDxy){
-  const b = [];
-  const t = c?.trend, p = c?.positioning, m = c?.macro;
-  if(t && t.ret1m != null) b.push('Trend 1M '+(t.ret1m*100>=0?'+':'')+(t.ret1m*100).toFixed(1)+'%'+(t.aboveSma200===false?' · unter 200-Tage':t.aboveSma200?' · über 200-Tage':''));
-  if(p && p.percentile3y != null) b.push('COT-Perzentil '+Math.round(p.percentile3y*100)+'%'+(p.extreme?' <b>(Extrem – gedämpft)</b>':'')+(p.reportDate?' · '+p.reportDate:''));
-  if(m && m.score != null) b.push('Makro '+(m.score>=0?'+':'')+m.score.toFixed(1));
-  if(isDxy && c?.surprise) b.push('Surprise-Index '+(c.surprise.score>=0?'+':'')+c.surprise.score.toFixed(1)+' · Inflation '+c.surprise.inflationImpulse+' · Wachstum '+c.surprise.growthImpulse);
-  if(isDxy && c?.rates) b.push('2J-Yield '+(c.rates.dgs2_20d>=0?'+':'')+Math.round(c.rates.dgs2_20d*100)+'bp/20T');
-  return b.join(' · ');
+const V2_LVL = { callWall:'Call-Wall', putWall:'Put-Wall', maxPain:'Max Pain', gammaFlip:'Gamma-Flip', retailLongEntry:'Retail-Longs ab', retailShortEntry:'Retail-Shorts ab' };
+function v2Fmt(k, v){ const dec = k.startsWith('retail') && v < 10 ? 4 : 0; return (+v).toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+function v2Pct(x){ return (x>=0?'+':'')+(x*100).toFixed(1)+'%'; }
+function v2Sc(x){ return (x>=0?'+':'')+(+x).toFixed(1); }
+// Klartext-Begründung pro Karte: welche Komponente zieht wohin
+function v2Explain(x, isDxy, label){
+  const c = x.components||{}, t=c.trend, p=c.positioning, m=c.macro, cr=c.crowd, st=c.structure;
+  const items = [];
+  if(t && t.ret1m != null){
+    const dir = t.score>0.5?'<b>Aufwärtstrend</b>':t.score<-0.5?'<b>Abwärtstrend</b>':'Trend ohne klare Richtung';
+    items.push(dir+': 1M '+v2Pct(t.ret1m)+', 3M '+v2Pct(t.ret3m)+(t.aboveSma200===false?', unter der 200-Tage-Linie':t.aboveSma200?', über der 200-Tage-Linie':'')+(t.aboveSma50===false?', unter 50-Tage':'')+'. Trend ist der stärkste Prädiktor auf Monatssicht.');
+  }
+  if(p && p.percentile3y != null){
+    const pc = Math.round(p.percentile3y*100);
+    const txt = p.extreme
+      ? '<b>COT-Extrem</b> ('+pc+'. Perzentil über 3 Jahre): Spekulanten sind so '+(pc>50?'long':'short')+' wie selten. Gesamtscore um 40 % gedämpft – Crowded Trade, Reversal-Risiko.'
+      : 'COT '+pc+'. Perzentil, Wochenveränderung '+(p.weeklyChange>=0?'+':'')+Math.round(p.weeklyChange).toLocaleString('de-DE')+' Kontrakte. Keine Extremlage.';
+    items.push(txt+' (Report '+p.reportDate+', 3 Tage Verzögerung)');
+  }
+  if(isDxy && x.rates){
+    const r=x.rates; items.push('Zinserwartung: 2J-Yield '+(r.dgs2_20d>=0?'+':'')+Math.round(r.dgs2_20d*100)+' bp in 20 Tagen, Realzins 10J '+(r.real10y_20d>=0?'+':'')+Math.round(r.real10y_20d*100)+' bp. '+(r.score>0.3?'Steigende Renditen stützen den Dollar.':r.score<-0.3?'Fallende Renditen schwächen den Dollar.':'Kein klarer Zinsimpuls.'));
+  }
+  if(isDxy && x.surprise){
+    const s=x.surprise; items.push(s.contributions?.length
+      ? 'Makro-Überraschungen (45 Tage, abklingend): Index '+v2Sc(s.score)+', Inflationsimpuls '+v2Sc(s.inflationImpulse)+', Wachstumsimpuls '+v2Sc(s.growthImpulse)+'. Letzte: '+s.contributions.slice(0,3).map(e=>e.code+' z'+v2Sc(e.z)).join(', ')
+      : 'Makro-Überraschungsindex: noch keine Releases erfasst – baut sich mit den nächsten US-Daten (CPI, NFP, PPI…) automatisch auf.');
+  }
+  if(!isDxy && m && m.score != null) items.push('Makro-Komponente '+v2Sc(m.score)+' (Inflations-/Wachstumsüberraschungen und Zinserwartung, gewichtet für '+label+').');
+  if(cr && cr.longPct != null){
+    const trap = cr.trapped==='longs' ? ' Diese Longs sitzen im Verlust – ihre Stops unter dem Markt sind der nächste Liquiditätspool.'
+               : cr.trapped==='shorts' ? ' Diese Shorts sitzen im Verlust – ihre Stops über dem Markt sind der nächste Liquiditätspool.' : '';
+    items.push(isDxy
+      ? '<b>Retail</b> (Myfxbook, aus EURUSD abgeleitet): '+(100-cr.longPct)+' % der Retail-Trader long EURUSD = '+cr.longPct+' % effektiv long Dollar. Contrarian-Score für den Dollar '+v2Sc(cr.score)+'.'
+      : '<b>Retail</b> (Myfxbook): '+cr.longPct+' % long, Ø-Einstieg Long '+v2Fmt('retailLongEntry',cr.avgLongEntry)+' / Short '+v2Fmt('retailShortEntry',cr.avgShortEntry)+'. Contrarian-Score '+v2Sc(cr.score)+'.'+trap);
+  }
+  if(st && st.levels){
+    const L=st.levels; items.push('Optionsstruktur'+(x.expiry?' (Verfall '+x.expiry+')':'')+': Max Pain '+v2Fmt('maxPain',L.maxPain)+', Call-Wall '+v2Fmt('callWall',L.callWall)+', Put-Wall '+v2Fmt('putWall',L.putWall)+'. Preis '+(x.regime||'')+'. Max Pain wirkt bis zum Verfall als Magnet.'+(st.funding!=null?' Funding '+(st.funding*100).toFixed(3)+' %.':''));
+  }
+  if(st && st.regime && !st.levels) items.push('Gamma-Regime: '+st.regime.replace(/_/g,' ')+'.');
+  if(x.scenarios?.summary) items.push('<b>Ausblick:</b> '+x.scenarios.summary.replace(/^[^:]+: /,''));
+  const wk = x.horizons?.weekly?.score ?? 0, mo = x.horizons?.monthly?.score ?? 0;
+  let fazit;
+  if(Math.abs(mo) < 0.3) fazit = '<span class="me-fazit me-neu">Fazit: Die Treiber heben sich auf – kein belastbarer Richtungs-Bias. Level und Regime nutzen, Richtung aus der Chartstruktur.</span>';
+  else if(Math.sign(wk)!==Math.sign(mo) && Math.abs(wk)>0.3) fazit = '<span class="me-fazit me-neu">Fazit: Woche und Monat widersprechen sich – Übergangsphase. Kleinere Positionsgrößen, auf Bestätigung warten.</span>';
+  else fazit = mo>0 ? '<span class="me-fazit me-bull">Fazit: Monatsbias leicht bis klar long ('+v2Sc(mo)+'). Rücksetzer sind im Zweifel Kaufgelegenheiten, solange die 200-Tage-Linie hält.</span>'
+                    : '<span class="me-fazit me-bear">Fazit: Monatsbias leicht bis klar short ('+v2Sc(mo)+'). Erholungen sind im Zweifel Verkaufsgelegenheiten, solange der Preis unter den gleitenden Durchschnitten bleibt.</span>';
+  return '<div class="me-list">'+items.map(i=>'<div class="me-item">'+i+'</div>').join('')+'</div>'+fazit;
+}
+function toggleV2(key){ const b=document.getElementById('v2x-'+key); if(b) b.classList.toggle('open'); }
+// Szenario-Block: bedingte Szenarien mit Wahrscheinlichkeit, Spanne, Trigger und Invalidierung – keine Punktprognose
+function v2Scen(sc, dec){
+  if(!sc || !sc.scenarios) return '';
+  const f = v => (+v).toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  const cls = n => n.includes('oben')?'up':n.includes('unten')?'dn':'rg';
+  const rows = sc.scenarios.map((s,i)=>'<div class="v2-sc '+cls(s.name)+(i===0?' base':'')+'">'
+    +'<span class="v2-sc-p">'+s.p+'%</span><div><div class="v2-sc-n">'+s.name+(i===0?' · Basis':'')+'</div>'
+    +'<div class="v2-sc-t"><b>'+f(s.from)+' – '+f(s.to)+'</b> · Trigger: '+s.trigger+' · ungültig bei: '+s.invalidation+'</div></div></div>').join('');
+  return '<div class="v2-scen"><div class="v2-scen-h"><span>Szenarien · nächste 5 Handelstage</span><span class="v2-sig">±'+f(sc.sigma5)+' (1σ)'+(sc.eventRisk>0.3?' <span class="v2-evt">Event-Risiko</span>':'')+'</span></div>'
+    +rows+(sc.trapNote?'<div class="v2-trap">'+sc.trapNote+'</div>':'')+'</div>';
+}
+// Hero-Stat-Karten aus Bias v2 (Wochen-Score) statt aus /bias/daily
+function updateStatCardsV2(data){
+  const map = { gold:'GOLD', nas:'NAS100', btc:'BTC' };
+  const up='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 18l8-8 4 4 6-6M21 8v6h-6"/></svg>';
+  const dn='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6l8 8 4-4 6 6M21 16v-6h-6"/></svg>';
+  Object.entries(map).forEach(([prefix,key])=>{
+    const valEl=document.getElementById('stat-bias-'+prefix), trendEl=document.getElementById('stat-trend-'+prefix);
+    if(!valEl||!trendEl) return;
+    const x = data && data.assets && data.assets[key];
+    if(!x){ valEl.textContent='—'; trendEl.className='stat-card-trend'; trendEl.textContent='Makro-Daten nicht verfügbar'; return; }
+    const w = x.horizons?.weekly?.score ?? 0, mo = x.horizons?.monthly?.score ?? 0;
+    valEl.textContent = w>0.3?'Bullish':w<-0.3?'Bearish':'Neutral';
+    trendEl.className = 'stat-card-trend '+(w>0.3?'t-bull':w<-0.3?'t-bear':'');
+    trendEl.innerHTML = (w>0.3?up:w<-0.3?dn:'')+'Woche '+v2Sc(w)+' · Monat '+v2Sc(mo)+(x.components?.positioning?.extreme?' · COT-Extrem':'');
+  });
 }
 function renderV2(data){
   const grid = document.getElementById('v2-grid'); if(!grid) return;
-  if(!data){ grid.innerHTML='<div class="bias-loading">Bias v2 gerade nicht erreichbar.</div>'; return; }
+  if(!data){ grid.innerHTML='<div class="bias-loading">Bias v2 gerade nicht erreichbar.</div>'; updateStatCardsV2(null); return; }
   grid.innerHTML = V2_ORDER.map(d => {
     const isDxy = d.key==='DXY';
     const x = isDxy ? data.dxy : data.assets?.[d.key];
     if(!x) return '';
     const H = x.horizons || {};
     const cls = v2Cls(H.weekly?.score ?? 0);
-    const regime = x.regime ? x.regime.replace(/_/g,' ') : '';
-    const lv = x.levels || {};
-    const levels = Object.entries(lv).filter(([,v])=>v!=null).map(([k,v])=>'<span class="v2-lvl">'+k.replace('callWall','Call-Wall').replace('putWall','Put-Wall').replace('maxPain','Max Pain').replace('gammaFlip','Gamma-Flip')+' '+Math.round(v).toLocaleString('de-DE')+'</span>').join('');
-    const comps = isDxy ? { ...(x.components||{}), surprise:x.surprise, rates:x.rates } : (x.components||{});
+    const regime = x.regime ? x.regime.replace(/_/g,' ') : (x.components?.positioning?.extreme ? 'COT-Extrem' : '');
+    // DXY: Retail-Daten stammen aus EURUSD (Longs/Shorts sind dort invertiert, Preise sind EURUSD-Kurse)
+    const lv = isDxy ? (x.components?.crowd?.levels || {}) : (x.levels || {});
+    const lbl = (k) => isDxy && k.startsWith('retail') ? (k==='retailLongEntry' ? 'EURUSD-Shorts ab' : 'EURUSD-Longs ab') : (V2_LVL[k]||k);
+    const levels = Object.entries(lv).filter(([,v])=>v!=null && v!==0).map(([k,v])=>'<span class="v2-lvl">'+lbl(k)+' '+v2Fmt(k,v)+'</span>').join('');
     return '<div class="v2-card '+cls+'">'
       +'<div class="v2-head"><span class="v2-instr">'+d.label+'</span><span class="v2-regime">'+regime+'</span></div>'
       +'<div class="v2-rows">'+['daily','weekly','monthly'].map(h=>v2Row(h,H[h])).join('')+'</div>'
       +(levels?'<div class="v2-levels">'+levels+'</div>':'')
-      +'<div class="v2-why">'+(v2Why(comps,isDxy)||'Beobachtung – keine Anlageberatung.')+'</div>'
+      +v2Scen(x.scenarios, x.scenarios && x.scenarios.price < 10 ? 4 : 0)
+      +'<button class="bias-expand-btn" onclick="toggleV2(\''+d.key+'\')">'
+      +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>Warum? Makro-Analyse</button>'
+      +'<div class="bias-explain" id="v2x-'+d.key+'">'+v2Explain(x,isDxy,d.label)+'</div>'
       +'</div>';
   }).join('');
+  updateStatCardsV2(data);
   const bad = Object.entries(data.dataHealth||{}).filter(([,v])=>v.stale).map(([k])=>k);
   const hl = document.getElementById('v2-health');
   if(hl) hl.innerHTML = bad.length ? 'Quellen ohne frische Daten: <b>'+bad.join(', ')+'</b>' : 'Alle Quellen aktuell · COT mit 3 Tagen Verzögerung';
