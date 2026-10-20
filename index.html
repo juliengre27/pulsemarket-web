@@ -1209,6 +1209,10 @@ function renderLiveEvents(events){
 
   latestLiveEvents = events;
 
+  // Header-Kalender + Event-Grid IMMER rendern — auch an ruhigen Tagen ohne High-Impact-Event.
+  // Vorher stand der Aufruf erst nach den frühen returns unten, deshalb blieb das Grid bei "Lade Events..." hängen.
+  updateHeaderCalendar(events);
+
   const displayEvents = events.filter(ev => ev.impact === 'High');
   const isFallback = false;
 
@@ -1252,8 +1256,6 @@ function renderLiveEvents(events){
   document.querySelectorAll('.live-event-card').forEach(card => {
     card.style.display = 'flex';
   });
-
-  updateHeaderCalendar(events);
 }
 
 // ============ HEADER CALENDAR WIDGET ============
@@ -1895,8 +1897,11 @@ function v2Row(h, o){
   const bar = s>=0 ? '<i class="pos" style="width:'+w+'%"></i>' : '<i class="neg" style="width:'+w+'%"></i>';
   return '<div class="v2-row"><span class="v2-h">'+V2_H[h]+'</span><div class="v2-meter">'+bar+'</div><span class="v2-val '+dir+'">'+(s>0?'+':'')+s.toFixed(1)+'</span></div>';
 }
-const V2_LVL = { callWall:'Call-Wall', putWall:'Put-Wall', maxPain:'Max Pain', gammaFlip:'Gamma-Flip', retailLongEntry:'Retail-Longs ab', retailShortEntry:'Retail-Shorts ab' };
-function v2Fmt(k, v){ const dec = k.startsWith('retail') && v < 10 ? 4 : 0; return (+v).toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+const V2_LVL = { callWall:'Call-Wall', putWall:'Put-Wall', maxPain:'Max Pain', gammaFlip:'Gamma-Flip', retailLongEntry:'Retail-Longs ab', retailShortEntry:'Retail-Shorts ab',
+  prevHigh:'Vortageshoch', prevLow:'Vortagestief', weekOpen:'Wochen-Open', atrHi:'ATR-Hoch', atrLo:'ATR-Tief' };
+// Nachkommastellen nach Größenordnung: EURUSD 4, DXY 2, Gold/NAS/BTC 0
+function v2Dec(v){ return v < 10 ? 4 : v < 1000 ? 2 : 0; }
+function v2Fmt(k, v){ const dec = v2Dec(+v); return (+v).toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
 function v2Pct(x){ return (x>=0?'+':'')+(x*100).toFixed(1)+'%'; }
 function v2Sc(x){ return (x>=0?'+':'')+(+x).toFixed(1); }
 // Klartext-Begründung pro Karte: welche Komponente zieht wohin
@@ -1934,7 +1939,8 @@ function v2Explain(x, isDxy, label){
     const L=st.levels; items.push('Optionsstruktur'+(x.expiry?' (Verfall '+x.expiry+')':'')+': Max Pain '+v2Fmt('maxPain',L.maxPain)+', Call-Wall '+v2Fmt('callWall',L.callWall)+', Put-Wall '+v2Fmt('putWall',L.putWall)+'. Preis '+(x.regime||'')+'. Max Pain wirkt bis zum Verfall als Magnet.'+(st.funding!=null?' Funding '+(st.funding*100).toFixed(3)+' %.':''));
   }
   if(st && st.regime && !st.levels) items.push('Gamma-Regime: '+st.regime.replace(/_/g,' ')+'.');
-  if(x.scenarios?.summary) items.push('<b>Ausblick:</b> '+x.scenarios.summary.replace(/^[^:]+: /,''));
+  if(x.today?.summary) items.push('<b>Heute:</b> '+x.today.summary.replace(/^[^:]+: /,''));
+  if(x.scenarios?.summary) items.push('<b>Ausblick 5 Tage:</b> '+x.scenarios.summary.replace(/^[^:]+: /,''));
   const wk = x.horizons?.weekly?.score ?? 0, mo = x.horizons?.monthly?.score ?? 0;
   let fazit;
   if(Math.abs(mo) < 0.3) fazit = '<span class="me-fazit me-neu">Fazit: Die Treiber heben sich auf – kein belastbarer Richtungs-Bias. Level und Regime nutzen, Richtung aus der Chartstruktur.</span>';
@@ -1954,6 +1960,19 @@ function v2Scen(sc, dec){
     +'<div class="v2-sc-t"><b>'+f(s.from)+' – '+f(s.to)+'</b> · Trigger: '+s.trigger+' · ungültig bei: '+s.invalidation+'</div></div></div>').join('');
   return '<div class="v2-scen"><div class="v2-scen-h"><span>Szenarien · nächste 5 Handelstage</span><span class="v2-sig">±'+f(sc.sigma5)+' (1σ)'+(sc.eventRisk>0.3?' <span class="v2-evt">Event-Risiko</span>':'')+'</span></div>'
     +rows+(sc.trapNote?'<div class="v2-trap">'+sc.trapNote+'</div>':'')+'</div>';
+}
+// Tagesszenario: Vortagesrange + ATR, Trigger sind Preislevel. Steht ÜBER den 5-Tage-Szenarien.
+function v2Today(t, dec){
+  if(!t || !t.scenarios) return '';
+  const f = v => (+v).toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  const cls = n => /oben/.test(n)?'up':/unten/.test(n)?'dn':'rg';
+  const rows = t.scenarios.map((s,i)=>'<div class="v2-sc '+cls(s.name)+(i===0?' base':'')+'">'
+    +'<span class="v2-sc-p">'+s.p+'%</span><div><div class="v2-sc-n">'+s.name+(i===0?' · Basis':'')+'</div>'
+    +'<div class="v2-sc-t"><b>'+f(s.from)+' – '+f(s.to)+'</b> · '+s.trigger+' · ungültig bei: '+s.invalidation+'</div></div></div>').join('');
+  const ev = (t.eventsToday||[]).map(e=>'<span class="v2-lvl">'+e.title+' '+e.timeBerlin+'</span>').join('');
+  const used = t.atrUsedPct!=null ? ' · ATR '+t.atrUsedPct+' % verbraucht' : '';
+  return '<div class="v2-scen v2-today"><div class="v2-scen-h"><span>Heute · Tagesszenario</span><span class="v2-sig">Range '+f(t.range.from)+'–'+f(t.range.to)+' · ATR '+f(t.atr14)+used+'</span></div>'
+    +rows+(ev?'<div class="v2-levels" style="margin-top:6px">'+ev+'</div>':'')+'</div>';
 }
 // Hero-Stat-Karten aus Bias v2 (Wochen-Score) statt aus /bias/daily
 function updateStatCardsV2(data){
@@ -1989,7 +2008,8 @@ function renderV2(data){
       +'<div class="v2-head"><span class="v2-instr">'+d.label+'</span><span class="v2-regime">'+regime+'</span></div>'
       +'<div class="v2-rows">'+['daily','weekly','monthly'].map(h=>v2Row(h,H[h])).join('')+'</div>'
       +(levels?'<div class="v2-levels">'+levels+'</div>':'')
-      +v2Scen(x.scenarios, x.scenarios && x.scenarios.price < 10 ? 4 : 0)
+      +v2Today(x.today, x.today ? v2Dec(x.today.price) : 0)
+      +v2Scen(x.scenarios, x.scenarios ? v2Dec(x.scenarios.price) : 0)
       +'<button class="bias-expand-btn" onclick="toggleV2(\''+d.key+'\')">'
       +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>Warum? Makro-Analyse</button>'
       +'<div class="bias-explain" id="v2x-'+d.key+'">'+v2Explain(x,isDxy,d.label)+'</div>'
