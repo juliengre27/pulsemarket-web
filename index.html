@@ -1971,7 +1971,9 @@ function v2Today(t, dec){
     +'<div class="v2-sc-t"><b>'+f(s.from)+' – '+f(s.to)+'</b> · '+s.trigger+' · ungültig bei: '+s.invalidation+'</div></div></div>').join('');
   const ev = (t.eventsToday||[]).map(e=>'<span class="v2-lvl">'+e.title+' '+e.timeBerlin+'</span>').join('');
   const used = t.atrUsedPct!=null ? ' · ATR '+t.atrUsedPct+' % verbraucht' : '';
-  return '<div class="v2-scen v2-today"><div class="v2-scen-h"><span>Heute · Tagesszenario</span><span class="v2-sig">Range '+f(t.range.from)+'–'+f(t.range.to)+' · ATR '+f(t.atr14)+used+'</span></div>'
+  const m = t.model || {};
+  const mcTxt = m.hoursLeft ? ' · '+m.hoursLeft+' h Rest · ±'+(m.sigmaRestPct ?? '?')+' % (1σ)' : '';
+  return '<div class="v2-scen v2-today"><div class="v2-scen-h"><span>Heute · Vola-Szenario</span><span class="v2-sig">Vortag '+f(t.prevLow)+'–'+f(t.prevHigh)+' · ATR '+f(t.atr14)+used+mcTxt+'</span></div>'
     +rows+(ev?'<div class="v2-levels" style="margin-top:6px">'+ev+'</div>':'')+'</div>';
 }
 // Hero-Stat-Karten aus Bias v2 (Wochen-Score) statt aus /bias/daily
